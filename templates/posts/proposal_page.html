@@ -1,0 +1,363 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load customtags %}
+{% block content %}
+<style>
+
+    .comment {
+        border-radius: 10px;
+        margin: 10px;
+        background-color: white;
+        padding: 10px 20px;
+        width: 100%;
+    }
+
+    .post-form {
+        margin: 15px auto 10px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .categ select {
+        padding: 0px;
+        font-size: 14px;
+        background-color: #f5f5f5;
+    }
+
+    .describe textarea {
+        padding: 10px 20px;
+        margin: 10px auto;
+        border-radius: 10px;
+        min-height: 50px;
+        max-height: 200px;
+        resize: none;
+        overflow-y: hidden;
+        font-size: 16px;
+    }
+
+    .describe button {
+        width: 100px;
+        margin-right: 10px;
+        border-radius: 10px;
+        letter-spacing: 3px;
+        font-weight: bold;
+    }
+
+    #id_location {
+        border-bottom: 1px solid gray;
+        border-radius: 0px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .profile-pic img {
+        height: 60px;
+        width: 60px;
+        margin: 20px;
+    }
+
+    .profile_img img {
+        height: 60px;
+        width: 60px;
+    }
+
+    /* This is copied from https://github.com/blueimp/jQuery-File-Upload/blob/master/css/jquery.fileupload.css */
+    .fileinput-button {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fileinput-button input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        opacity: 0;
+        -ms-filter: "alpha(opacity=0)";
+        font-size: 200px;
+        direction: ltr;
+        cursor: pointer;
+    }
+
+    .thumb {
+        height: 80px;
+        width: 100px;
+        border: 1px solid #000;
+    }
+
+    ul.thumb-Images li {
+        width: 120px;
+        float: left;
+        display: inline-block;
+        vertical-align: top;
+        height: 120px;
+    }
+
+    .img-wrap {
+        position: relative;
+        display: inline-block;
+        font-size: 0;
+    }
+
+    .img-wrap .close {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        z-index: 100;
+        background-color: #d0e5f5;
+        padding: 5px 2px 2px;
+        color: #000;
+        font-weight: bolder;
+        cursor: pointer;
+        opacity: 0.5;
+        font-size: 23px;
+        line-height: 10px;
+        border-radius: 50%;
+    }
+
+    .img-wrap:hover .close {
+        opacity: 1;
+        background-color: #ff0000;
+    }
+
+    .FileNameCaptionStyle {
+        font-size: 12px;
+    }
+    .content{
+        background-color: white;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mt-2" id="completePostSection">
+        <div class="row">
+            {% include 'snippets/post_link.html' %}
+        </div>
+        <div class="row">
+            <h3 style="margin-top:30px;">Offers: </h3>
+            <div style="width:96%;">
+            {% for proposal in proposals %}
+                    <div id="{{proposal.id}}proposaldiv">
+                    {% include 'snippets/proposals.html' %}
+                     </div>    
+            {% endfor %}
+        </div>
+        </div>
+        </div>
+        <div class="col-lg-4 d-none d-sm-none d-md-block">
+            <div style="position:relative;">
+                   <aside class="user-info-wrapper">
+                       <div class="user-cover" style="background-color:#0088FF;">
+   
+                       </div>
+                       <div class="user-info">
+                           <div class="user-avatar">
+                               {% if posts.0.author.profile_pic %}
+                               <img src="{{posts.0.author.profile_pic.url}}" alt='user'>
+                               {% else %}
+                               <img src="{{defaultImage.profile_image.url}}" alt='user'>
+                               {% endif %}
+                           </div>
+                           <div class="user-data">
+                               <a href="{% url 'user_posts' posts.0.author.id %}"><h4>{{posts.0.author.name}}</h4>
+                               <p class="mb-1">@{{posts.0.author.username}}</p></a>
+                               <span>Joined: {{posts.0.author.date_joined|date:"M, Y"}}</span>
+                           </div>
+                           <p>{{posts.0.author.bio|default_if_none:"no bio"}}</p>
+                           <div class="row" style="flex-direction:column-reverse;">
+                               <div class="col">
+                                   <a href="#" onclick="loadUserPosts(event)" postsURL="{% url 'ajax_user_posts' %}" userid="{{posts.0.author.id}}">{{posts.0.author.post_set.all|totalQuery}} posts</a>
+                               </div>
+                           </div>
+                           <p>
+   
+                           </p>
+                           <hr>
+   
+                       </div>
+                   </aside>
+               </div>
+       </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+<script>
+
+    function openOfferFeedback(event){
+        event.preventDefault()
+        var proposalid = event.target.attributes.proposalid.value
+        document.getElementById(proposalid+'offerfeedback').style.display = 'initial'
+    }
+
+    
+
+    function offerFeedbackSubmit(event){
+        event.preventDefault()
+        var kvpairs = {'feedback':''}
+        var form = event.target
+        var proposaltype = form.attributes.proposaltype.value
+        var proposalid = form.attributes.proposalid.value
+        var posid = form.attributes.postid.value
+        var url = form.attributes.feedbackurl.value
+        for (var i = 0; i < form.elements.length; i++) {
+            var e = form.elements[i];
+            if (e.checked || e.name == 'feedback') {
+                kvpairs[e.name] = e.value;
+            }
+        }
+        $.ajax({
+            url:url,
+            type:'POST',
+            data: {
+                proposalid: proposalid,
+                proposaltype: proposaltype,
+                feedback: kvpairs['feedback'],
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                console.log('abc')
+                document.getElementById(proposalid+'proposaldiv').innerHTML = data
+            }
+        })
+
+    }
+
+    function loadUserPosts(event){
+        event.preventDefault()
+        var url = event.target.attributes.postsURL.value
+        var userid = event.target.attributes.userid.value
+        $.ajax({
+            url:url,
+            data:{
+                userid:userid
+            },
+            success:function(data){
+                document.getElementById('completePostSection').innerHTML = data
+            },
+            error:function(err){
+                console.log(err)
+            }
+
+        })
+    }
+
+
+    function submitPostComment(event) {
+        event.preventDefault()
+        var commentBox = document.getElementById('postCommentInput')
+        var enableButton = document.getElementById('enabledButton')
+        var disableButton = document.getElementById('disabledButton')
+        var url = event.target.attributes.commenturl.value
+        var postid = event.target.attributes.postid.value
+        var message = commentBox.value
+        enableButton.style.display = 'none'
+        disableButton.style.display = 'inherit'
+        commentBox.disabled = true
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                postId: postid,
+                message: message,
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                loadComments()
+                commentBox.disabled = false
+                commentBox.value = ''
+                enableButton.style.display = 'inherit'
+                disableButton.style.display = 'none'
+            },
+            error: function (err) {
+                console.log(err)
+                commentBox.disabled = false
+                enableButton.style.display = 'inherit'
+                disableButton.style.display = 'none'
+            }
+        })
+    }
+
+    function closesubmit(event){
+        event.target.parentElement.parentElement.style.display='none'
+    }
+
+    function openfeedback(event){
+        event.preventDefault()
+        var postid = event.target.attributes.postid.value
+        document.getElementById(postid + 'offerdiv').style.display = 'none'
+        document.getElementById(postid + 'feedbackdiv').style.display = 'initial'
+    }
+
+    function openUpdateFeedback(event){
+        event.preventDefault()
+        var url = event.target.attributes.feedbackfetchurl.value
+        var postid = event.target.attributes.postid.value
+        document.getElementById(postid + 'offerdiv').style.display = 'none'
+        document.getElementById(postid+'reviewEditIcon').style.display = 'initial'
+        var feedbackdiv = document.getElementById(postid + 'feedbackdiv')
+        $.ajax({
+            url:url,
+            data:{
+                postid:postid
+            },
+            success:function(data){
+                var {rating,feedback} = data
+                document.getElementById(`post${postid}${rating}`).checked = 'checked'
+                document.getElementById(`${postid}starfeedback`).value = decodeURI(feedback)
+                feedbackdiv.style.display = 'initial'
+            },
+            error:function(err){
+                alert('Network Issue')
+            }
+        })
+    }
+
+    function feedbackSubmit(event) {
+        event.preventDefault()
+        var kvpairs = {'rating': '', 'feedback': ''};
+        var form = event.target // get the form somehow
+        var postid = form.attributes.postid.value
+        var url = form.attributes.feedbackurl.value
+        var updateurl = form.attributes.feedbackUpdate.value
+        for (var i = 0; i < form.elements.length; i++) {
+            var e = form.elements[i];
+            if (e.checked || e.name == 'feedback') {
+                kvpairs[e.name] = e.value;
+            }
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                postid: postid,
+                rating: kvpairs['rating'],
+                feedback: kvpairs['feedback'],
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                document.getElementById(`${postid}feedbackdiv`).style.display = 'none';
+                document.getElementById(`${postid}rating`).innerHTML = data['rating'];
+                document.getElementById(`${postid}rating_count`).innerHTML = ` | ${data['rating_count']} Reviews`;
+                $.ajax({
+                    url:updateurl,
+                    data:{
+                        'postId':postid
+                    },
+                    success:function(data){
+                        document.getElementById(`${postid}feedbackList`).innerHTML = data
+                    }
+                })
+            }
+        })
+    }
+
+    
+
+</script>
+{% endblock %}

@@ -1,0 +1,728 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load customtags %}
+{% block content %}
+
+	<style>
+
+    .post {
+        border-radius: 10px;
+        margin: 10px;
+        background-color: white;
+        padding: 10px 20px;
+        width: 100%;
+    }
+
+    .post a {
+        color: #444444;
+    }
+
+    .post b {
+        color: black;
+    }
+
+    .thumbnail {
+        width: 100%;
+        max-height: 300px;
+    }
+    
+        .post-form {
+        margin: 15px 0px 10px 0px;
+        padding: 20px;
+        border-bottom: 1px solid #ddd;
+        display: none;
+    }
+
+    .categ select {
+        padding: 0px;
+        font-size: 14px;
+        background-color: #f5f5f5;
+    }
+
+    .describe textarea {
+        padding: 10px 20px;
+        margin: 10px auto;
+        border-radius: 10px;
+        min-height: 50px;
+        max-height: 200px;
+        resize: none;
+        overflow-y: hidden;
+        font-size: 16px;
+    }
+
+    .describe button {
+        width: 100px;
+        margin-right: 10px;
+        border-radius: 10px;
+        letter-spacing: 3px;
+        font-weight: bold;
+    }
+
+    #id_location {
+        border-bottom: 1px solid gray;
+        border-radius: 0px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .share-post {
+        padding: 20px;
+        margin: 15px auto 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .share-post button {
+        background-color: lightblue;
+        border-radius: 10px;
+        width: 100%;
+        font-size: 18px;
+        border: 1px solid #eee;
+        margin-top: 10px;
+    }
+
+    /* This is copied from https://github.com/blueimp/jQuery-File-Upload/blob/master/css/jquery.fileupload.css */
+    .fileinput-button {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fileinput-button input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        opacity: 0;
+        -ms-filter: "alpha(opacity=0)";
+        font-size: 200px;
+        direction: ltr;
+        cursor: pointer;
+    }
+
+    .thumb {
+        height: 80px;
+        width: 100px;
+        border: 1px solid #000;
+    }
+
+    ul.thumb-Images li {
+        width: 120px;
+        float: left;
+        display: inline-block;
+        vertical-align: top;
+        height: 120px;
+    }
+
+    .img-wrap {
+        position: relative;
+        display: inline-block;
+        font-size: 0;
+    }
+
+    .img-wrap .close {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        z-index: 100;
+        background-color: #d0e5f5;
+        padding: 5px 2px 2px;
+        color: #000;
+        font-weight: bolder;
+        cursor: pointer;
+        opacity: 0.5;
+        font-size: 23px;
+        line-height: 10px;
+        border-radius: 50%;
+    }
+
+    .img-wrap:hover .close {
+        opacity: 1;
+        background-color: #ff0000;
+    }
+
+    .FileNameCaptionStyle {
+        font-size: 12px;
+    }   
+</style>
+
+ 
+<div class="container-fluid">
+	<div class="row" id="groupPage" style="margin-bottom:200px;margin-top:40px;">
+		<div class="col-lg-12" id="postSection" postLink="{% url 'load_group_post' %}" defaultPostLink="{% url 'load_group_default_post' %}">
+			{% include 'snippets/group_posts.html' %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block domready %}
+	<script>
+		$(document).ready(function () {
+
+		})
+
+
+		 function likePost(event) {
+        event.preventDefault()
+        var target = event.target.children[0]
+        var postid = target.attributes.postid.value
+        var url = document.getElementById('urlTag').attributes.likedislikeurl.value
+        var currentColor = target.attributes.fill.value
+        target.attributes.fill.value = currentColor === 'blue' ? 'currentColor' : 'blue';
+        document.getElementById(postid + 'dislike').attributes.fill.value = 'currentColor'
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                postId: postid,
+                action: 'like',
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                document.getElementById(postid + 'likeCount').innerHTML = data.likes
+                document.getElementById(postid + 'dislikeCount').innerHTML = data.dislikes
+            },
+            error: function (err) {
+                var currentColor = target.attributes.fill.value
+                target.attributes.fill.value = currentColor === 'blue' ? 'currentColor' : 'blue';
+            }
+        })
+    }
+
+
+    function dislikePost(event) {
+        event.preventDefault()
+        var target = event.target.children[0]
+        var postid = target.attributes.postid.value
+        var url = document.getElementById('urlTag').attributes.likedislikeurl.value
+        var currentColor = target.attributes.fill.value
+        target.attributes.fill.value = currentColor === 'red' ? 'currentColor' : 'red'
+        document.getElementById(postid + 'like').attributes.fill.value = 'currentColor'
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                postId: postid,
+                action: 'dislike',
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                console.log(data)
+                document.getElementById(postid + 'likeCount').innerHTML = data.likes
+                document.getElementById(postid + 'dislikeCount').innerHTML = data.dislikes
+            },
+            error: function (err) {
+                console.log(err);
+                var currentColor = target.attributes.fill.value
+                target.attributes.fill.value = currentColor === 'red' ? 'currentColor' : 'red';
+            }
+        })
+    }
+
+
+    function loadDefaultPost(){
+        var url = $('#postSection').attr('defaultPostLink')
+        $.ajax({
+                url:url,
+                success: function(data){
+                    document.getElementById('postSection').innerHTML = data
+                },
+                error: function(err){
+                    console.log(err)
+                }
+            })
+     }
+
+      function loadPostSection(event){
+            event.preventDefault()
+            var url = $('#postSection').attr('postLink')
+            var group_name = event.target.attributes.groupname.value
+            $.ajax({
+                url:url,
+                data:{
+                    group_name:group_name                    
+                },
+                success: function(data){
+                    document.getElementById('postSection').innerHTML = data
+                },
+                error: function(err){
+                    console.log(err)
+                }
+            })
+        }
+
+         function reLoadPostSection(group_name){
+            var url = $('#postSection').attr('postLink')
+            $.ajax({
+                url:url,
+                data:{
+                    group_name:group_name                    
+                },
+                success: function(data){
+                    document.getElementById('postSection').innerHTML = data
+                },
+                error: function(err){
+                    console.log(err)
+                }
+            })
+        }
+
+         function saveForm(event){
+           event.preventDefault()
+           var url = $('#postForm').attr('formURL')
+           var group_id = $('#postForm').attr('groupid')
+           var group_name = $('#postForm').attr('groupname')
+           var description = document.getElementById('id_description').value
+           var thumbnail = document.getElementById('id_thumbnail').files[0]
+           var formdata = new FormData()
+
+           formdata.append("csrfmiddlewaretoken", '{{ csrf_token }}')
+           formdata.append("description",description)
+           formdata.append('group_id',group_id)
+           if(thumbnail){
+                formdata.append("thumbnail",thumbnail)
+           }
+           $.ajax({
+            url:url,
+            type:'POST',
+            data:formdata,
+            contentType: false,
+            processData: false,
+            success:function(data){
+                reLoadPostSection(group_name)
+            },
+            error:function(err){
+                console.log(err)
+            }
+           })
+        }
+
+
+        function joinGroup(event){
+            event.preventDefault()
+            var url = $('#joinBtn').attr('joinURL')
+            var group_name = $('#joinBtn').attr('group_name')
+            $.ajax({
+                url:url,
+                data:{
+                    group_name:group_name
+                },
+                success:function(data){
+                   reLoadPostSection(group_name)
+                   loadUserGroups()
+                },
+                error:function(err){
+                    console.log(err)
+                }
+            })
+        }
+
+
+         function openJoinModal(event){
+            event.preventDefault()
+            $('#joinBtn').click()
+        }
+
+        function openLeftModal(event){
+            event.preventDefault()
+            $('#leftBtn').click()
+        }
+
+        function leftGroup(event){
+            event.preventDefault()
+            var url = $('#leftBtn').attr('leftURL')
+            var group_name = $('#leftBtn').attr('group_name')
+            $.ajax({
+                url:url,
+                data:{
+                    group_name:group_name
+                },
+                success:function(data){
+                   reLoadPostSection(group_name)
+                   loadUserGroups()
+                },
+                error:function(err){
+                    console.log(err)
+                }
+            })
+        }   
+
+	</script>
+
+	<script>
+    //I added event handler for the file upload control to access the files properties.
+
+    //To save an array of attachments
+    var AttachmentArray = [];
+
+    //counter for attachment array
+    var arrCounter = 0;
+
+    //to make sure the error message for number of files will be shown only one time.
+    var filesCounterAlertStatus = false;
+
+    //un ordered list to keep attachments thumbnails
+    var ul = document.createElement("ul");
+    ul.className = "thumb-Images";
+    ul.id = "imgList";
+
+    function likePost(event) {
+        event.preventDefault()
+        var target = event.target.children[0]
+        var postid = target.attributes.postid.value
+        var url = document.getElementById('urlTag').attributes.likedislikeurl.value
+        var currentColor = target.attributes.fill.value
+        target.attributes.fill.value = currentColor === 'blue' ? 'currentColor' : 'blue';
+        document.getElementById(postid + 'dislike').attributes.fill.value = 'currentColor'
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                postId: postid,
+                action: 'like',
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                console.log(data)
+                document.getElementById(postid + 'likeCount').innerHTML = data.likes
+                document.getElementById(postid + 'dislikeCount').innerHTML = data.dislikes
+            },
+            error: function (err) {
+                console.log(err)
+                var currentColor = target.attributes.fill.value
+                target.attributes.fill.value = currentColor === 'blue' ? 'currentColor' : 'blue';
+            }
+        })
+    }
+
+
+    function dislikePost(event) {
+        event.preventDefault()
+        var target = event.target.children[0]
+        var postid = target.attributes.postid.value
+        var url = document.getElementById('urlTag').attributes.likedislikeurl.value
+        var currentColor = target.attributes.fill.value
+        target.attributes.fill.value = currentColor === 'red' ? 'currentColor' : 'red'
+        document.getElementById(postid + 'like').attributes.fill.value = 'currentColor'
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                postId: postid,
+                action: 'dislike',
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                console.log(data)
+                document.getElementById(postid + 'likeCount').innerHTML = data.likes
+                document.getElementById(postid + 'dislikeCount').innerHTML = data.dislikes
+            },
+            error: function (err) {
+                console.log(err);
+                var currentColor = target.attributes.fill.value
+                target.attributes.fill.value = currentColor === 'red' ? 'currentColor' : 'red';
+            }
+        })
+    }
+
+    function closesubmit(event) {
+        event.target.parentElement.parentElement.style.display = 'none'
+    }
+
+    const copyToClipboard = str => {
+        const el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    };
+
+
+    const copyUrl = event => {
+        var str = window.location.origin + event.target.attributes.postURL.value
+        copyToClipboard(str)
+    }
+
+    const openDeletePopUp = event => {
+        event.preventDefault()
+        var postid = event.target.attributes.postid.value
+        document.getElementById('confirmGroupPostDeleteBtn').setAttribute('postid', postid)
+        document.getElementById('deleteBtn').click()
+    }
+
+    const openReportPopUp = event => {
+        event.preventDefault()
+        var postid = event.target.attributes.postid.value
+        document.getElementById('confirmGroupPostFraudBtn').setAttribute('postid', postid)
+        document.getElementById('confirmGroupPostSpamBtn').setAttribute('postid', postid)
+        document.getElementById('reportBtn').click()
+    }
+
+    const deletePost = event => {
+        var postid = event.target.attributes.postid.value
+        var url = event.target.attributes.deleteurl.value
+        var group_name = event.target.attributes.groupname.value
+        $.ajax({
+            url: url,
+            data: {
+                postid: postid
+            },
+            success: function (data) {
+                console.log(data)
+                reLoadPostSection(group_name)
+            },
+            error: function (msg) {
+                console.log(msg)
+            }
+        })
+    }
+
+    const fraudPost = event => {
+        var postid = event.target.attributes.postid.value
+        var url = event.target.attributes.reporturl.value
+        $.ajax({
+            url: url,
+            data: {
+                postid: postid,
+                report_type: 'FRAUD'
+            },
+            success: function (data) {
+                console.log(data)
+                document.getElementById('reportAlert').style.display = 'inherit'
+            },
+            error: function (msg) {
+                console.log(msg)
+            }
+        })
+    }
+
+    const spamPost = event => {
+        var postid = event.target.attributes.postid.value
+        var url = event.target.attributes.reporturl.value
+        $.ajax({
+            url: url,
+            data: {
+                postid: postid,
+                report_type: 'SPAM'
+            },
+            success: function (data) {
+                console.log(data)
+                document.getElementById('reportAlert').style.display = 'inherit'
+            },
+            error: function (msg) {
+                console.log(msg)
+            }
+        })
+    }
+
+    const removeOverflow = event => {
+
+    }
+
+
+    //the handler for file upload event
+    function handleFileSelect(e) {
+        //to make sure the user select file/files
+        if (!e.target.files) return;
+
+        //To obtaine a File reference
+        var files = e.target.files;
+
+        // Loop through the FileList and then to render image files as thumbnails.
+        for (var i = 0, f; (f = files[i]); i++) {
+            //instantiate a FileReader object to read its contents into memory
+            var fileReader = new FileReader();
+
+            // Closure to capture the file information and apply validation.
+            fileReader.onload = (function (readerEvt) {
+                return function (e) {
+                    //Apply the validation rules for attachments upload
+                    ApplyFileValidationRules(readerEvt);
+
+                    //Render attachments thumbnails.
+                    RenderThumbnail(e, readerEvt);
+
+                    //Fill the array of attachment
+                    FillAttachmentArray(e, readerEvt);
+                };
+            })(f);
+
+            // Read in the image file as a data URL.
+            // readAsDataURL: The result property will contain the file/blob's data encoded as a data URL.
+            // More info about Data URI scheme https://en.wikipedia.org/wiki/Data_URI_scheme
+            fileReader.readAsDataURL(f);
+        }
+    }
+
+    //To remove attachment once user click on x button
+    jQuery(function ($) {
+        $("div").on("click", ".img-wrap .close", function () {
+            var id = $(this)
+                .closest(".img-wrap")
+                .find("img")
+                .data("id");
+
+            //to remove the deleted item from array
+            var elementPos = AttachmentArray.map(function (x) {
+                return x.FileName;
+            }).indexOf(id);
+            if (elementPos !== -1) {
+                AttachmentArray.splice(elementPos, 1);
+            }
+
+            //to remove image tag
+            $(this)
+                .parent()
+                .find("img")
+                .not()
+                .remove();
+
+            //to remove div tag that contain the image
+            $(this)
+                .parent()
+                .find("div")
+                .not()
+                .remove();
+
+            //to remove div tag that contain caption name
+            $(this)
+                .parent()
+                .parent()
+                .find("div")
+                .not()
+                .remove();
+
+            //to remove li tag
+            var lis = document.querySelectorAll("#imgList li");
+            for (var i = 0; (li = lis[i]); i++) {
+                if (li.innerHTML == "") {
+                    li.parentNode.removeChild(li);
+                }
+            }
+        });
+    });
+
+    //Apply the validation rules for attachments upload
+    function ApplyFileValidationRules(readerEvt) {
+        //To check file type according to upload conditions
+        if (CheckFileType(readerEvt.type) == false) {
+            alert(
+                "The file (" +
+                readerEvt.name +
+                ") does not match the upload conditions, You can only upload jpg/png/gif files"
+            );
+            e.preventDefault();
+            return;
+        }
+
+        //To check file Size according to upload conditions
+        if (CheckFileSize(readerEvt.size) == false) {
+            alert(
+                "The file (" +
+                readerEvt.name +
+                ") does not match the upload conditions, The maximum file size for uploads should not exceed 1MB"
+            );
+            e.preventDefault();
+            return;
+        }
+
+        //To check files count according to upload conditions
+        if (CheckFilesCount(AttachmentArray) == false) {
+            if (!filesCounterAlertStatus) {
+                filesCounterAlertStatus = true;
+                alert(
+                    "You have added more than 10 files. According to upload conditions you can upload 10 files maximum"
+                );
+            }
+            e.preventDefault();
+            return;
+        }
+    }
+
+    //To check file type according to upload conditions
+    function CheckFileType(fileType) {
+        if (fileType == "image/jpeg") {
+            return true;
+        } else if (fileType == "image/png") {
+            return true;
+        } else if (fileType == "image/gif") {
+            return true;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    //To check file Size according to upload conditions
+    function CheckFileSize(fileSize) {
+        if (fileSize < 1000000) {
+            return true;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    //To check files count according to upload conditions
+    function CheckFilesCount(AttachmentArray) {
+        //Since AttachmentArray.length return the next available index in the array,
+        //I have used the loop to get the real length
+        var len = 0;
+        for (var i = 0; i < AttachmentArray.length; i++) {
+            if (AttachmentArray[i] !== undefined) {
+                len++;
+            }
+        }
+        //To check the length does not exceed 10 files maximum
+        if (len > 9) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //Render attachments thumbnails.
+    function RenderThumbnail(e, readerEvt) {
+        var li = document.createElement("li");
+        ul.appendChild(li);
+        li.innerHTML = [
+            '<div class="img-wrap"> <span class="close">&times;</span>' +
+            '<img class="thumb" src="',
+            e.target.result,
+            '" title="',
+            escape(readerEvt.name),
+            '" data-id="',
+            readerEvt.name,
+            '"/>' + "</div>"
+        ].join("");
+
+        var div = document.createElement("div");
+        div.className = "FileNameCaptionStyle";
+        li.appendChild(div);
+        div.innerHTML = [readerEvt.name].join("");
+        document.getElementById("Filelist").insertBefore(ul, null);
+    }
+
+    //Fill the array of attachment
+    function FillAttachmentArray(e, readerEvt) {
+        AttachmentArray[arrCounter] = {
+            AttachmentType: 1,
+            ObjectType: 1,
+            FileName: readerEvt.name,
+            FileDescription: "Attachment",
+            NoteText: "",
+            MimeType: readerEvt.type,
+            Content: e.target.result.split("base64,")[1],
+            FileSizeInBytes: readerEvt.size
+        };
+        arrCounter = arrCounter + 1;
+    }
+
+
+</script>
+{% endblock %}

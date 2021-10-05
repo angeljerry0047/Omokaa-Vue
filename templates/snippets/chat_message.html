@@ -1,0 +1,51 @@
+<div style="max-height:300px;overflow-x:hidden" id="smallchat">
+{% for message in messages %}
+                    {% if message.sender != request.user %}
+                    <div class="row texts">
+                        <div class="col-1">
+                            <button class=" btn btn-mytext" style="background-color: #efefef;">{{message.sender.name.0}}</button>
+                        </div>
+                        <div class="col other-text" style="display:flex;align-items:center;">
+                            <p class="messageText">{{message.message|linebreaks}}</p>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                    {% else %}
+                    <div class="row texts">
+                        <div class="col-3"></div>
+                        <div class="col my-text mr-2" style="display:flex;align-items:center;justify-content:flex-end;">
+                            <p class="messageText">{{message.message|linebreaks}}</p>
+                        </div>
+                        <div class="col-1">
+                            <button class=" btn btn-mytext">{{message.sender.name.0}}</button>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% empty %}
+                      <div style="margin:40px"></div>
+{% endfor %}
+<form>
+                    <div class="row">
+                        <div class="col message">
+                            <textarea class="form-control textarea" rows="1" id="chat-small-message-input"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-2 mb-2">
+                        <div class="col" align="right">
+                            <input type="submit" class="btn btn-success btn-sm" value="send" id="chat-small-message-submit">
+                        </div>
+                    </div>
+                </form>
+</div>
+
+<script>
+	var $submit = $('#chat-small-message-submit');
+	$submit.click(function(event){
+		event.preventDefault()
+		console.log('abcd')
+	})
+</script>
+
+
+
+

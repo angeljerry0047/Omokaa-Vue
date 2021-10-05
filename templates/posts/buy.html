@@ -1,0 +1,37 @@
+{% block content %}
+
+<h2>Create Milestone Payment</h2>
+<p>You can release this payment once you are 100% satisfied with the goods/services provided.</p>
+<div class="row">
+    <div class="col">
+    <div class="col-auto">
+      <label class="sr-only" for="amount">Amount</label>
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+              <select>
+                  <option value="Ksh">Ksh</option>
+                  <option value="$">$</option>
+              </select>
+          </div>
+        </div>
+        <input type="text" class="form-control" id="amount" placeholder="Amount">
+      </div>
+    </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="description">Amount</label>
+            <input type="text" class="form-control" id="description" aria-describedby="emailHelp"
+                   placeholder="Describe what you are buying here...">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col text-right">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Create Milestone</button>
+    </div>
+</div>
+
+{% endblock %}

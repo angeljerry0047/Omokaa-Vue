@@ -1,0 +1,238 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .content {
+        margin-top: 15px;
+        background-color: white;
+        padding: 5px 30px;
+        text-align: justify;
+        border-radius: 6px;
+    }
+
+    .not {
+        padding: 10px;
+        border-radius: 5px;
+        margin: 2px;
+    }
+
+    .not-title {
+        border-bottom: 1px solid #666666;
+    }
+
+    .profile-pic img {
+        height: 40px;
+        width: 40px;
+    }
+
+    .not p {
+        margin: 0px auto auto -50px;
+    }
+
+    hr {
+        margin: 0px;
+    }
+
+    @media only screen and (max-width: 992px) {
+        .profile-pic {
+            height: 30px;
+            width: 30px;
+            margin-right: 10px;
+        }
+
+        .not {
+            padding: 0px;
+            border-radius: 5px;
+            margin: 2px;
+        }
+
+        .not p {
+            margin: 0px auto auto 20px;
+        }
+    }
+
+    @media only screen and (max-width: 768px) {
+        .
+    }
+</style>
+
+<div class="container" id="notifyTag" notificationUrl="{% url 'notification_open' %}">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="content">
+                <div class="row not-title">
+                    <div class="col">
+                        <h5 style="color: #666666">Notifications</h5>
+                    </div>
+                    <div class=" col-2 col-right d-lg-none">
+                        <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-gear" fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" stroke="lightblue"
+                                  d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
+                            <path fill-rule="evenodd" stroke="lightblue"
+                                  d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                {% for notification in notifications %}
+                <div class="row not" id="{{notification.id}}notifyHead"
+                     style="{% if notification.is_opened == False %}background-color: #D2D7FF{% endif %}">
+                    <div class="col-2 profile-pic">
+                        {% if notification.sender.profile_pic %}
+                        <img src="{{notification.sender.profile_pic.url}}">
+                        {% else %}
+                        <img src="{{defaultImage.profile_image.url}}">
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        {% if notification.action == 'postlike' %}
+                        <p>
+                            <a href="{% url 'group_post_detail' notification.groupPost.id %}"
+                               style="text-decoration:none;color:black;"
+                               onclick="{% if notification.is_opened == False %}openNotification(event){% endif %}"
+                               notificationid={{notification.id}}>
+                                <b>{{notification.sender.name}}</b> liked your post
+                            </a>
+                        {% elif notification.action == 'postdislike' %}
+                        <p><a href="{% url 'group_post_detail' notification.groupPost.id %}"
+                              style="text-decoration:none;color:black;"
+                              onclick="{% if notification.is_opened == False %}openNotification(event){% endif %}"
+                              notificationid={{notification.id}}><b>{{notification.sender.name}}</b> disliked your post</a>
+                           
+                        {% elif notification.action == 'commentlike' %}
+                        <p><a href="{% url 'comment_detail' notification.comment.id %}"
+                              style="text-decoration:none;color:black;"
+                              onclick="{% if notification.is_opened == False %}openNotification(event){% endif %}"
+                              notificationid={{notification.id}}><b>{{notification.sender.name}}</b> liked your comment</a>
+                        {% elif notification.action == 'commentdislike' %}
+                        <p><a href="{% url 'comment_detail' notification.comment.id %}"
+                              style="text-decoration:none;color:black;"
+                              onclick="{% if notification.is_opened == False %}openNotification(event){% endif %}"
+                              notificationid={{notification.id}}><b>{{notification.sender.name}}</b> disliked your
+                            comment</a>
+                        {% elif notification.action == 'postcomment' %}
+                        <p><a href="{% url 'group_post_detail' notification.groupPost.id %}"
+                              style="text-decoration:none;color:black;"
+                              onclick="{% if notification.is_opened == False %}openNotification(event){% endif %}"
+                              notificationid={{notification.id}}><b>{{notification.sender.name}}</b> commented on your
+                            post</a>
+                        {% elif notification.action == 'commentreply' %}
+                        <p><a href="{% url 'comment_detail' notification.comment.id %}"
+                              style="text-decoration:none;color:black;"
+                              onclick="{% if notification.is_opened == False %}openNotification(event){% endif %}"
+                              notificationid={{notification.id}}><b>{{notification.sender.name}}</b> replied to your
+                            comment</a>
+                        {% elif notification.action == 'rating' %}
+                        <p><a href="{% url 'post_detail' notification.post.id notification.post.date_published.year notification.post.date_published.month notification.post.date_published.day notification.post.slug   %}"
+                              style="text-decoration:none;color:black;"
+                              onclick="{% if notification.is_opened == False %}openNotification(event){% endif %}"
+                              notificationid={{notification.id}}><b>{{notification.sender.name}}</b> rated on your post</a>
+                        {% endif %}
+
+
+
+                        <!-- Mark as read icon -->
+                        {% if notification.is_opened == False %}
+                            <a href="#" id="{{notification.id}}notifyItem" style="float:right;text-decoration:none;"
+                               onclick="notificationOpen(event)" notificationid={{notification.id}}>
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-envelope-open-fill"
+                                     fill="#666666" xmlns="http://www.w3.org/2000/svg" style="pointer-events:none;">
+                                    <path d="M8.941.435a2 2 0 0 0-1.882 0l-6 3.2A2 2 0 0 0 0 5.4v.313l6.709 3.933L8 8.928l1.291.717L16 5.715V5.4a2 2 0 0 0-1.059-1.765l-6-3.2zM16 6.873l-5.693 3.337L16 13.372v-6.5zm-.059 7.611L8 10.072.059 14.484A2 2 0 0 0 2 16h12a2 2 0 0 0 1.941-1.516zM0 13.373l5.693-3.163L0 6.873v6.5z" style="pointer-events:none;"/>
+                                </svg>
+                            </a>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                {% empty %}
+                    {% if request.user.is_authenticated %}
+                    
+                    <h3>There is no notifications yet.</h3>
+
+                    {% else %}
+
+                    <h3>Notifications will be displayed here</h3>
+
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-4">
+
+            <div class="content d-none d-lg-block" style="background-color: #f0f2f5">
+                <h5 align="center" style="color: #666666">Settings</h5>
+                <hr>
+                <div class="row mt-2">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="customCheck1">
+                            <label class="custom-control-label" for="customCheck1">Receive Email notifications</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="customCheck2">
+                            <label class="custom-control-label" for="customCheck2">Receive SMS notifications</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+<script>
+
+    function notificationOpen(event) {
+        event.preventDefault()
+        var url = $('#notifyTag').attr('notificationUrl')
+        var notificationId = event.target.attributes.notificationid.value
+        $.ajax({                       // initialize an AJAX request
+            url: url,                    // set the url of the request (= localhost:8000/app/ajax/load-zones/)
+            data: {
+                'notificationId': notificationId      // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_zones` view function
+                console.log(data)  // replace the contents of the Zone input with the data that came from the server
+                document.getElementById(notificationId + 'notifyHead').style.background = "white"
+                document.getElementById(notificationId + 'notifyItem').style.display = "none"
+            },
+            alert: function (err) {
+                console.log(err)
+            }
+        })
+    }
+
+    function openNotification(event) {
+        event.preventDefault()
+        var url = $('#notifyTag').attr('notificationUrl')
+        var redirectUrl = event.target.attributes.href.value
+        var notificationId = event.target.attributes.notificationid.value
+        $.ajax({                       // initialize an AJAX request
+            url: url,                    // set the url of the request (= localhost:8000/app/ajax/load-zones/)
+            data: {
+                'notificationId': notificationId      // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_zones` view function
+                window.location.replace(redirectUrl)
+            },
+            alert: function (err) {
+                console.log(err)
+            }
+        })
+    }
+
+</script>
+{% endblock %}

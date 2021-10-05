@@ -1,0 +1,49 @@
+<button type="button" id="joinBtn" class="btn btn-primary" data-toggle="modal" data-target="#joinGroupModal"
+        style="display:none" joinURL="{% url 'join_group' %}" group_name="{{group.name}}">
+</button>
+<div class="modal fade" id="joinGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Join Group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Ary you sure want to Join the Group?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">cancel</button>
+                <button id="confirmDeleteBtn" type="button" class="btn btn-primary" data-dismiss="modal"
+                        onclick="joinGroup(event)" deleteurl="{% url 'delete_post' %}">Join
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button type="button" id="leftBtn" class="btn btn-primary" data-toggle="modal" data-target="#leftGroupModal"
+        style="display:none" leftURL="{% url 'left_group' %}" group_name="{{group.name}}">
+</button>
+<div class="modal fade" id="leftGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Leave Group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Ary you sure want to left the Group?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">cancel</button>
+                <button id="confirmDeleteBtn" type="button" class="btn btn-primary" data-dismiss="modal"
+                        onclick="leftGroup(event)" deleteurl="{% url 'delete_post' %}">Left
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

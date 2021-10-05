@@ -1,0 +1,585 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load customtags %}
+{% block content %}
+ 
+<style>
+    p { word-break: normal }
+    .resultBtn{
+        border-radius: 10px;
+        padding:10px 30px;
+    }
+
+    .post {
+        border-radius: 5px;
+        margin: 5px 16px;
+        background-color: white;
+        padding: 10px 0 0;
+        width: 100%;
+    }
+
+    .noPointer{
+        pointer-events: none;
+    }
+
+    .post-form {
+        margin: 30px auto 0px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .categ select {
+        padding: 0px;
+        font-size: 14px;
+        background-color: #f5f5f5;
+    }
+
+    .describe textarea {
+        padding: 10px 20px;
+        margin: 10px auto;
+        border-radius: 10px;
+        min-height: 50px;
+        max-height: 200px;
+        resize: none;
+        overflow-y: hidden;
+        font-size: 16px;
+    }
+
+    .describe button {
+        width: 100px;
+        margin-right: 10px;
+        border-radius: 10px;
+        letter-spacing: 3px;
+        font-weight: bold;
+    }
+
+    .profile-pic img {
+        height: 40px;
+        width: 40px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background-color: white;
+    }
+
+    .post a {
+        color: #444444;
+    }
+
+    .post b {
+        color: black;
+    }
+
+    .thumbnail {
+        width: 100%;
+        max-height: 300px;
+    }
+
+    .promoted {
+        border-radius: 10px;
+        font-size: 12px;
+        background-color: #f0f2f5;
+        padding: 2px 10px;
+        border: none;
+        color: #6EBBFF;
+    }
+
+    .location {
+        color: #6EBBFF;
+        margin-left: 0;
+    }
+
+    .search-menu{
+        text-align: center;
+    }
+    .search-items{
+        border-right: 1px solid #666666;
+    }
+    .search-items a{
+        text-decoration: none;
+        color: #666666;
+    }
+
+    .post-detail {
+        color: #666666;
+        font-size: 14px;
+        font-family: sans-serif !important;
+    }
+
+    .post-detail a{
+        color:#0088FF;
+    }
+
+    @media (min-width: 556px){
+        .chat{
+            text-align: right;
+        }
+    }
+
+    @media (max-width: 556px){
+        .resultBtn{
+            padding: 5px 10px;
+        }
+    }
+    
+
+</style>
+<div id="urlTag" likedislikeurl="{% url 'ajax_like_dislike' %}"></div>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="content search-menu bg-light">
+                <div class="row">
+                    <div class="col search-items bg-light"><a  class="resultBtn" href="#" onclick="callBioResult(event)" id="bioBtn" style="background:#00ffff4a;">Bio</a></div>
+                    <div class="col search-items bg-light"><a class="resultBtn" href="#" onclick="callPostResult(event)" id="postBtn">Posts</a></div>
+                    <div class="col search-items bg-light"><a class="resultBtn" href="#" onclick="callPeopleResult(event)" id="peopleBtn">People</a></div>
+                    <div class="col search-items bg-light" style="border-right: none;"><a class="resultBtn" href="#" onclick="callMerchantResult(event)" id="merchantBtn">Merchants</a></div>
+                </div>
+            </div>
+            <div id="resultSection">
+                <div class="spinner-border" role="status" id="resultdisabledButton"
+                 style="margin-left:50%;margin-top:30%"></div>
+            </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-block">
+
+            <div class="content">
+                {% include 'snippets/account_link.html' %}
+            </div>
+            <div class="content" id="filterSection">
+                <h5 align="center">Filter by:</h5>
+                <hr>
+                <form class="form-filter" id="resultForm" data-category-url="{% url 'ajax_load_category' %}" data-result-url="{% url 'load_results' %}" people-data-url="{% url 'load_people_results' %}" merchant-data-url="{% url 'load_merchant_results' %}" bio-data-url="{% url 'load_bio_results' %}" onsubmit="submitSearchForm(event)" novalidate>
+                    <div class="row mb-3">
+                        <div class="col">
+                            {{result_form.type}}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            {{result_form.category}}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            {{result_form.sub_category}}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            {{result_form.location}}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+<script>
+    var searchInput = 'id_location';
+    $(document).ready(function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('q');
+        loadBioResult(myParam)
+
+        $("#filterBtn").click(function () {
+            $("#resultForm").toggle();
+        });
+
+        $("#id_type").change(function () {
+            var url = $("#resultForm").attr("data-category-url");  // get the url of the `load_cities` view
+            var typeId = $(this).val();  // get the selected country ID from the HTML input
+
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'type': typeId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_category").html(data);  // replace the contents of the city input with the data that came from the server
+                    loadResult()
+                }
+            });
+        });
+
+        $("#id_category").change(function () {
+            var url = $("#resultForm").attr("data-category-url");  // get the url of the `load_cities` view
+            var sub_categoryId = $(this).val();  // get the selected country ID from the HTML input
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'category': sub_categoryId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_sub_category").html(data);  // replace the contents of the city input with the data that came from the server
+                    loadResult()
+                }
+            });
+            
+        });
+
+        $('#id_sub_category').change(function () {
+            loadResult()
+        });
+
+        var autocomplete;
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById(searchInput)), {
+            types: ['geocode'],
+        });
+
+
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var near_place = autocomplete.getPlace();
+        });
+
+    })
+
+    function dropdownEvent(event) {
+        var url = event.target.attributes.href.value
+        window.location = window.location.origin + url
+    }
+
+    function likePost(event) {
+        event.preventDefault()
+        var target = event.target.children[0]
+        var postid = target.attributes.postid.value
+        var url = document.getElementById('urlTag').attributes.likedislikeurl.value
+        var currentColor = target.attributes.fill.value
+        target.attributes.fill.value = currentColor === 'blue' ? 'currentColor' : 'blue';
+        document.getElementById(postid + 'dislike').attributes.fill.value = 'currentColor'
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                postId: postid,
+                action: 'like',
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                document.getElementById(postid + 'likeCount').innerHTML = data.likes
+                document.getElementById(postid + 'dislikeCount').innerHTML = data.dislikes
+            },
+            error: function (err) {
+                console.log(err)
+                var currentColor = target.attributes.fill.value
+                target.attributes.fill.value = currentColor === 'blue' ? 'currentColor' : 'blue';
+            }
+        })
+    }
+
+
+    function dislikePost(event) {
+        event.preventDefault()
+        var target = event.target.children[0]
+        var postid = target.attributes.postid.value
+        var url = document.getElementById('urlTag').attributes.likedislikeurl.value
+        var currentColor = target.attributes.fill.value
+        target.attributes.fill.value = currentColor === 'red' ? 'currentColor' : 'red'
+        document.getElementById(postid + 'like').attributes.fill.value = 'currentColor'
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                postId: postid,
+                action: 'dislike',
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                document.getElementById(postid + 'likeCount').innerHTML = data.likes
+                document.getElementById(postid + 'dislikeCount').innerHTML = data.dislikes
+            },
+            error: function (err) {
+                console.log(err);
+                var currentColor = target.attributes.fill.value
+                target.attributes.fill.value = currentColor === 'red' ? 'currentColor' : 'red';
+            }
+        })
+    }
+
+
+    function callBioResult(event){
+        event.preventDefault()
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('q');
+        event.target.style.background = '#00ffff4a'
+        document.getElementById('peopleBtn').style.background = 'transparent'
+        document.getElementById('postBtn').style.background = 'transparent'
+        document.getElementById('merchantBtn').style.background = 'transparent'
+        loadBioResult(myParam)
+    }
+
+    function loadBioResult(searched_keyword=''){
+        var url = $('#resultForm').attr('bio-data-url')
+        $.ajax({
+            url:url,
+            data:{
+                searched_keyword:searched_keyword
+                 },
+            success:function(data){
+                document.getElementById('resultSection').innerHTML = data
+                document.getElementById('filterSection').style.display='none'
+            }
+        })
+    }
+
+    function callMerchantResult(event){
+        event.preventDefault()
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('q');
+        event.target.style.background = '#00ffff4a'
+        document.getElementById('bioBtn').style.background = 'transparent'
+        document.getElementById('postBtn').style.background = 'transparent'
+        document.getElementById('peopleBtn').style.background = 'transparent'
+        loadMerchantResult(myParam)
+    }    
+
+    function loadMerchantResult(searched_keyword=''){
+        var url = $('#resultForm').attr('merchant-data-url')
+        $.ajax({
+            url:url,
+            data:{
+                searched_keyword:searched_keyword
+                 },
+            success:function(data){
+                document.getElementById('resultSection').innerHTML = data
+                document.getElementById('filterSection').style.display='none'
+            },
+            error:function(err){
+                console.log(err)
+            }
+        })
+    }
+
+
+    function callPeopleResult(event){
+        event.preventDefault()
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('q');
+        event.target.style.background = '#00ffff4a'
+        document.getElementById('bioBtn').style.background = 'transparent'
+        document.getElementById('postBtn').style.background = 'transparent'
+        document.getElementById('merchantBtn').style.background = 'transparent'
+        loadPeopleResult(myParam)
+    }
+
+    function loadPeopleResult(searched_keyword=''){
+        var url = $('#resultForm').attr('people-data-url')
+        $.ajax({
+            url:url,
+            data:{
+                searched_keyword:searched_keyword
+                 },
+            success:function(data){
+                document.getElementById('resultSection').innerHTML = data
+                document.getElementById('filterSection').style.display='none'
+            },
+            error:function(err){
+                console.log(err)
+            }
+        })
+    }
+
+
+    function callPostResult(event){
+        event.preventDefault()
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('q');
+        event.target.style.background = '#00ffff4a'
+        document.getElementById('bioBtn').style.background = 'transparent'
+        document.getElementById('peopleBtn').style.background = 'transparent'
+        document.getElementById('merchantBtn').style.background = 'transparent'
+        loadResult(myParam)
+    }
+
+    function loadResult(myParam = '') {
+        var url = $('#resultForm').attr('data-result-url')
+        var type = $("#id_type").val()
+        var category = $("#id_category").val()
+        var sub_category = $("#id_sub_category").val()
+        var location = $("#id_location").val()
+        $.ajax({
+            url: url,
+            data: {
+                q: myParam,
+                type: type,
+                category: category,
+                sub_category: sub_category,
+                location: location
+            },
+            success: function (data) {
+                document.getElementById('resultSection').innerHTML = data
+                document.getElementById('filterSection').style.display= 'block'
+            },
+            error: function (msg) {
+                console.log(msg)
+            }
+        })
+    }
+
+    function submitSearchForm(event) {
+        event.preventDefault()
+        loadResult()
+    }
+
+    function closesubmit(event) {
+        event.target.parentElement.parentElement.style.display = 'none'
+    }
+
+    function openfeedback(event) {
+        event.preventDefault()
+        var postid = event.target.attributes.resultid.value
+        var feedbackform = document.getElementById(postid + 'feedbackform')
+        feedbackform.style.display = 'initial'
+    }
+
+    function openUpdateFeedback(event){
+        event.preventDefault()
+        var url = event.target.attributes.feedbackfetchurl.value
+        var postid = event.target.attributes.resultid.value
+        var feedbackform = document.getElementById(postid + 'feedbackform')
+        $.ajax({
+            url:url,
+            data:{
+                postid:postid
+            },
+            success:function(data){
+                var {rating,feedback} = data
+                document.getElementById(`result${postid}${rating}`).checked = 'checked'
+                document.getElementById(`${postid}starfeedback`).value = decodeURI(feedback)
+                feedbackform.style.display = 'initial'
+            },
+            error:function(err){
+                alert('Network Issue')
+            }
+        })
+    }
+
+    function feedbackSubmit(event) {
+        event.preventDefault()
+        var kvpairs = {'rating': '', 'feedback': ''};
+        var form = event.target // get the form somehow
+        var postid = form.attributes.resultid.value
+        var url = form.attributes.feedbackurl.value
+        for (var i = 0; i < form.elements.length; i++) {
+            var e = form.elements[i];
+            if (e.checked || e.name == 'feedback') {
+                kvpairs[e.name] = e.value;
+            }
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                postid: postid,
+                rating: kvpairs['rating'],
+                feedback: kvpairs['feedback'],
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+               document.getElementById(`${postid}feedbackform`).style.display = 'none';
+             document.getElementById(`${postid}rating`).innerHTML = data['rating'];
+             document.getElementById(`${postid}rating_count`).innerHTML = ` | ${data['rating_count']} Reviews`;
+
+            }
+        })
+    }
+
+    const copyToClipboard = str => {
+        const el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    };
+
+
+    const copyUrl = event => {
+        var str = window.location.origin + event.target.attributes.postURL.value
+        copyToClipboard(str)
+    }
+
+    const openDeletePopUp = event => {
+        event.preventDefault()
+        var postid = event.target.attributes.postid.value
+        document.getElementById('confirmDeleteBtn').setAttribute('postid', postid)
+        document.getElementById('deleteBtn').click()
+    }
+
+    const openReportPopUp = event => {
+        event.preventDefault()
+        var postid = event.target.attributes.postid.value
+        document.getElementById('confirmFraudBtn').setAttribute('postid', postid)
+        document.getElementById('confirmSpamBtn').setAttribute('postid', postid)
+        document.getElementById('reportBtn').click()
+    }
+
+    const deletePost = event => {
+        var postid = event.target.attributes.postid.value
+        var url = event.target.attributes.deleteurl.value
+        $.ajax({
+            url: url,
+            data: {
+                postid: postid
+            },
+            success: function (data) {
+                console.log(data)
+                loadResult()
+            },
+            error: function (msg) {
+                console.log(msg)
+            }
+        })
+
+    }
+
+    const fraudPost = event => {
+        var postid = event.target.attributes.postid.value
+        var url = event.target.attributes.reporturl.value
+        $.ajax({
+            url: url,
+            data: {
+                postid: postid,
+                report_type: 'FRAUD'
+            },
+            success: function (data) {
+                console.log(data)
+                document.getElementById('reportAlert').style.display = 'inherit'
+            },
+            error: function (msg) {
+                console.log(msg)
+            }
+        })
+    }
+
+    const spamPost = event => {
+        var postid = event.target.attributes.postid.value
+        var url = event.target.attributes.reporturl.value
+        $.ajax({
+            url: url,
+            data: {
+                postid: postid,
+                report_type: 'SPAM'
+            },
+            success: function (data) {
+                console.log(data)
+                document.getElementById('reportAlert').style.display = 'inherit'
+            },
+            error: function (msg) {
+                console.log(msg)
+            }
+        })
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .col-xs-10 {
+        margin: 100px auto;
+        width: 80%;
+    }
+
+    .search-form {
+        margin: 30px auto 0px;
+        padding: 30px 100px 50px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .search {
+        margin: 20px auto;
+    }
+
+    .search-card {
+        width: 90%;
+        background-color: white;
+        border-radius: 5px;
+        padding: 80px 40px;
+        margin: -20px auto;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -ms-transform: translateY(-50%);
+        transform: translateY(10%);
+    }
+
+    .search-sm input {
+        border-radius: 20px;
+        margin: 40px auto;
+    }
+
+
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-xs-10 d-md-none">
+            <div class="search-card">
+                <form class="search-sm" action="/results/" method="GET">
+                    <div class="input-group navbar-right">
+                        <input type="search" class="form-control" placeholder="Search here"
+                               aria-label="Recipient's username"
+                               aria-describedby="basic-addon2" name="q" value="{{query}}">
+                    </div>
+                    <input type="submit" id="submit2" class="form-control btn btn-success search" value="Search"/>
+                </form>
+            </div>
+        </div>
+        <div class="col-8 content d-none d-md-block">
+            <div class="row">
+                <div class="col">
+                    <form class="search-form" method="GET" action="/results/" id="searchForm"
+                          data-category-url="{% url 'ajax_load_category' %}" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col search">
+                                {{search_form.type}}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col search">
+                                {{search_form.category}}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col search">
+                                {{search_form.sub_category}}
+                            </div>
+                        </div>
+                        <div class="row" id="search">
+                            <div class="col">
+                                <button type="submit" id="submit1" class="form-control btn btn-success search">Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+<script>
+    $(document).ready(function () {
+
+        $("#submit1").attr('disabled', 'disabled');
+        $("#id_type").change(function () {
+            var url = $("#searchForm").attr("data-category-url");  // get the url of the `load_cities` view
+            var typeId = $(this).val();  // get the selected country ID from the HTML input
+
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'type': typeId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_category").html(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+            if ($(this).val() && $('#id_category').val()) {
+                $("#submit1").removeAttr('disabled');
+            }
+
+        });
+
+
+        $("#id_category").change(function () {
+            var url = $("#searchForm").attr("data-category-url");  // get the url of the `load_cities` view
+            var sub_categoryId = $(this).val();  // get the selected country ID from the HTML input
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'category': sub_categoryId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_sub_category").html(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+            if ($(this).val() && $('#id_category').val()) {
+                $("#search").css("display", "flex")
+            }
+        });
+
+    })
+</script>
+{% endblock %}

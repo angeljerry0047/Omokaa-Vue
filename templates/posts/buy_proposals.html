@@ -1,0 +1,227 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load customtags %}
+
+
+{% block content %}
+
+<style>
+
+    .post {
+        border-radius: 10px;
+        margin: 10px;
+        background-color: white;
+        padding: 10px 20px;
+        width: 100%;
+    }
+
+    .post a {
+        color: #444444;
+    }
+
+    .post b {
+        color: black;
+    }
+
+    .thumbnail {
+        width: 100%;
+        max-height: 300px;
+    }
+
+    .location {
+        color: #aaa;
+        float: right;
+    }
+
+    .profile_img img {
+        height: 40px;
+        width: 40px;
+        margin: 10px;
+    }
+
+
+</style>
+	<div class="container">
+			<div class="row">
+        <div class="col-lg-8 mt-2" id="completePostSection">
+            <div class="row">
+            {% include 'snippets/post_link.html' %}
+            </div>
+            <div class="row" style="flex-direction: column;">
+              {% if request.user == post.author %}
+     {% for proposal in proposals %}
+          <div class="content">
+             <div class="row">
+                <div class="profile_img col-auto">
+                  <a href="{% url 'user_posts' post.author.id %}">
+                    {% if proposal.bidder.profile_pic %}
+                    <img src="{{proposal.bidder.profile_pic.url}}">
+                    {% else %}
+                    <img src="{{defaultImage.profile_image.url}}">
+                    {% endif %}
+                    </a>
+                </div>
+                  <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <a href="{%  url 'user_posts' post.author.id %}" style="color:black"><b>{{proposal.bidder.name}}</b> @{{proposal.bidder.username}}</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p>{{proposal.created_at}}</p>
+                        </div>
+                    </div>
+                </div> 
+             </div>
+          <p>Amount: <span style="font-weight:700">{{proposal.currency}} {{proposal.amount}}</span></p>
+          <p>{{proposal.description}}</p>
+        </div>
+     {% endfor %}
+  {% else %}
+
+    {% if not has_bidded %}
+       <div class="content">
+        <h2>Create Milestone Payment</h2>
+<p>You can release this payment once you are 100% satisfied with the goods/services provided.</p>
+<form method="POST" id="buyform" formURL="{% url 'create_buy_proposal' %}" postid={{post.id}}>
+  {% csrf_token %}
+<div class="row">
+    <div class="col">
+    <div class="col-auto">
+      <label class="sr-only" for="amount">Amount</label>
+      <div class="form-group">
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+              <select id="currency" required>
+                  <option value="Ksh" name="currency">Ksh</option>
+                  <option value="$" name="currency">$</option>
+              </select>
+          </div>
+        </div>
+        <input type="text" class="form-control" id="amount" placeholder="Amount" required>
+      </div>
+      </div>
+    </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+          <textarea class="form-control" rows="1" id="description" placeholder="Describe what you are buying here..."  required></textarea>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col text-right">
+        <!-- <button class="btn btn-secondary">Cancel</button> -->
+        <button class="btn btn-primary" type="submit" onclick="createBuyProposal(event)">Create Milestone</button>
+    </div>
+</div>
+</form>
+       </div>
+       {% else %}
+        <div class="content">
+          <div class="row">
+                <div class="profile_img col-auto">
+                  <a href="{% url 'user_posts' post.author.id %}">
+                    {% if userbid.bidder.profile_pic %}
+                    <img src="{{userbid.bidder.profile_pic.url}}">
+                    {% else %}
+                    <img src="{{defaultImage.profile_image.url}}">
+                    {% endif %}
+                    </a>
+                </div>
+                  <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <a href="{%  url 'user_posts' post.author.id %}" style="color:black"><b>{{userbid.bidder.name}}</b> @{{userbid.bidder.username}}</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p>{{userbid.created_at}}</p>
+                        </div>
+                    </div>
+                </div> 
+             </div>
+          <p>Amount: <span style="font-weight:700">{{userbid.currency}} {{userbid.amount}}</span></p>
+          <p>{{userbid.description}}</p>
+        </div>
+    {% endif %}
+  {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-4 d-none d-sm-none d-md-block">
+         <div style="position:relative;">
+                <aside class="user-info-wrapper">
+                    <div class="user-cover" style="background-color:#0088FF;">
+
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {% if posts.0.author.profile_pic %}
+                            <img src="{{posts.0.author.profile_pic.url}}" alt='user'>
+                            {% else %}
+                            <img src="{{defaultImage.profile_image.url}}" alt='user'>
+                            {% endif %}
+                        </div>
+                        <div class="user-data">
+                            <a href="{% url 'user_posts' posts.0.author.id %}"><h4>{{posts.0.author.name}}</h4>
+                            <p class="mb-1">@{{posts.0.author.username}}</p></a>
+                            <span>Joined: {{posts.0.author.date_joined|date:"M, Y"}}</span>
+                        </div>
+                        <p>{% lorem 40 w %}</p>
+                        <div class="row" style="flex-direction:column-reverse;">
+                            <div class="col">
+                                <a href="#" onclick="loadUserPosts(event)" postsURL="{% url 'ajax_user_posts' %}" userid="{{posts.0.author.id}}">{{posts.0.author.post_set.all|totalQuery}} posts</a>
+                            </div>
+                        </div>
+                        <p>
+
+                        </p>
+                        <hr>
+
+                    </div>
+                </aside>
+            </div>
+    </div>
+        </div>
+
+
+	
+
+	</div>
+{% endblock %}
+
+
+{% block domready %}
+	<script>
+		function createBuyProposal(event){
+			event.preventDefault()
+			var description = $('#description').val()
+			var currency = $('#currency')[0].options[$('#currency')[0].selectedIndex].value
+			var amount = $('#amount').val()
+			var url = $('#buyform').attr('formURL')
+			var postid = $('#buyform').attr('postid')
+			$.ajax({
+				url:url,
+				method:'POST',
+				data:{
+					postid:postid,
+					description:description,
+					currency:currency,
+					amount:amount,
+					"csrfmiddlewaretoken":"{{csrf_token}}"
+				},
+				success:function(data){
+					window.location.reload()
+				},
+				error:function(err){
+					console.log(err)
+				}
+
+			})
+		}
+	</script>
+{% endblock %}

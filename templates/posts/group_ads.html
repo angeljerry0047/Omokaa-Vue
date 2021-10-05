@@ -1,0 +1,85 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Group Ads{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="content">
+                <h4 align="center">The next available slot is 15/10/2020</h4>
+                <hr>
+                    <form id="groupAdForm">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="group_ad_package"
+                                           id="Radios1" value="1 week" checked>
+                                    <label class="form-check-label" for="Radios1">1 week</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="group_ad_package"
+                                           id="Radios2" value="2 weeks">
+                                    <label class="form-check-label" for="Radios2">2 weeks</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="group_ad_package"
+                                           id="Radios3" value="3 weeks">
+                                    <label class="form-check-label" for="Radios3">3 weeks</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="group_ad_package"
+                                           id="Radios4" value="4 weeks">
+                                    <label class="form-check-label" for="Radios4">4 weeks</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col"></div>
+                            <div class="col-right">
+                                <h5 id="pack_total">Ksh. <b>3,000</b></h5>
+                            </div>
+                        </div>
+                    </form>
+                <button class="btn btn-primary">Upload Banner</button>
+                <p>The banner should be 250px by 500px</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="content">
+                <h3>Your Ads</h3>
+                <p>You don't have any ads at the moment</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block domready %}
+<script>
+    $(document).ready(function () {
+    $('input[type=radio][name=group_ad_package]').change(function() {
+        if (this.value == "1 week") {
+            $("#pack_total").html("Ksh. <b>3,000</b>");
+        }else if (this.value == "2 weeks") {
+            $("#pack_total").html("Ksh. <b>5,750</b>");
+        }else if (this.value == "3 weeks") {
+            $("#pack_total").html("Ksh. <b>8,150</b>");
+        }else if (this.value == "4 weeks") {
+            $("#pack_total").html("Ksh. <b>10,000</b>");
+        }
+    });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:calc(100vh - 150px);" class="content">
+<p style="font-size:30px;max-width:550px;margin:20px 10px;">Thankyou for visiting our site. You don't have any chosen interests yet, choose your preferred interests </p>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#interestFormModal">Choose Interests</button>
+</div>
+
+<div class="modal fade" id="interestFormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Select Your Interest</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="interestForm" reloadurl="{% url 'post_reload_url' %}">
+                <ul style="list-style:none;" id="interestTag" categoryURL="{% url 'load_categories' %}" subCategoryURL="{% url 'load_sub_categories' %}">
+                {% for types in interest_types %} 
+                    <li><input type="checkbox" name="types" value={{types.id}} typeid={{types.id}} onchange="loadCategories(event)">
+                    <label for={{types.name}}>{{types.name}}</label> 
+                        <div id="{{types.id}}loadCategories">
+                        </div>
+                    </li>
+                {% endfor %}
+                </ul>
+                <button type="submit" class="btn btn-success" onclick="interestSubmit(event)" style="width:100%;margin: 10px 0px;">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block domready %}
+
+	<script>
+		 function loadCategories(event){
+        var typeid = event.target.attributes.typeid.value
+        var tagId = typeid + "loadCategories"
+        if(event.target.checked){
+                var url = $("#interestTag").attr('categoryURL')
+                $.ajax({
+                    url:url,
+                    data:{
+                        typeid:typeid
+                    },
+                    success:function(data){
+                        document.getElementById(tagId).innerHTML = data
+                    }
+                })
+        }
+        else{
+            document.getElementById(tagId).innerHTML = ''
+        } 
+    }
+
+    function loadSubCategories(event){
+        var categoryid = event.target.attributes.categoryid.value
+        var typeid = event.target.attributes.typeid.value
+        var tagId = typeid + categoryid + "loadSubCategories"
+        if(event.target.checked){    
+            var url = $("#interestTag").attr('subCategoryURL') 
+            $.ajax({
+                url:url,
+                data:{
+                    categoryid:categoryid
+                },
+                success:function(data){
+                 document.getElementById(tagId).innerHTML = data
+                }
+            })
+       }
+       else{
+            document.getElementById(tagId).innerHTML = ''
+       }
+    }
+
+   function reloadPost(){
+        var form = document.getElementById('interestForm')
+        var kvpairs = []
+        var url = form.attributes.reloadurl.value
+        var typeList = {"types":[],"categories":[]}
+        var categoryList = {"category":[],"sub_categories":[]}
+        for( var i = 0; i < form.elements.length; i++ ) {
+            var e = form.elements[i]; 
+            if(e.checked){
+            if(e.name == 'types'){
+                if(typeList['types'].length !== 0){
+                if(categoryList['category'].length != 0){
+                    typeList['categories'].push(categoryList)    
+                }
+                kvpairs.push(typeList)
+                typeList = {"types":[],"categories":[]}
+                categoryList = {"category":[],"sub_categories":[]}
+                }
+             }
+             if(e.name == 'types'){
+              typeList[encodeURIComponent(e.name)].push(encodeURIComponent(e.value));             
+              }
+              else if(e.name == 'categories'){
+                if(categoryList['category'].length != 0){
+                    typeList['categories'].push(categoryList)
+                    categoryList = {"category":[],"sub_categories":[]}
+                }
+                categoryList['category'].push(encodeURIComponent(e.value))
+              }
+              else if(e.name == 'sub_categories'){
+                categoryList['sub_categories'].push(encodeURIComponent(e.value))
+              }
+            }
+            if((i == form.elements.length-1) && typeList["types"] !== []){
+                if(categoryList['category'].length != 0){
+                    typeList['categories'].push(categoryList)
+                }
+                kvpairs.push(typeList)
+            }            
+            }
+        if(kvpairs.length == 1 && kvpairs[0]['types'].length == 0){
+            kvpairs = []
+        }
+        kvpairs = JSON.stringify(kvpairs)
+
+        $.ajax({
+            type:'POST',
+            url:url,
+            data:{
+                interestList:kvpairs,
+                csrfmiddlewaretoken:'{{csrf_token}}'
+            },
+            success:function(data){
+                window.location = window.location.origin
+            }
+        })
+        }
+
+
+    function interestSubmit(event){
+        event.preventDefault()
+        reloadPost()  
+    }
+
+	</script>
+
+{% endblock %}

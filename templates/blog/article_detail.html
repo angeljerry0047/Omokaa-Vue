@@ -1,0 +1,154 @@
+{% extends 'accounts/base.html' %}
+{% load blog_tags %}
+{% load static %}
+{% load customtags %}
+{% block title %}{{article.title}}{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .comment {
+        border-radius: 10px;
+        margin-top: 10px;
+        background-color: white;
+        padding: 10px 20px;
+        width: 100%;
+        border: 1px solid #dfcfcf;
+    }
+
+    .related h2 {
+        margin: 80px auto 20px;
+        text-align: center;
+        font-weight: bold;
+        color: #0088ff;
+    }
+
+    .article-title{
+        color: black;
+        font-size: 30px;
+    }
+
+    .date{
+        color: #666666;
+        font-size: 14px;
+        margin: -6px auto -18px;
+    }
+
+    .article-body{
+        color: #666666;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4 d-none d-lg-block p-4 related">
+            <h2>Related Articles</h2>
+            <hr>
+            {% for article in related_articles %}
+            <p>
+                <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+            </p>
+            {% empty %}
+            <p>There are no related articles yet.</p>
+            {% endfor %}
+        </div>
+        <div class="col p-4">
+            <h1 class="article-title">{{ article.title }}</h1>
+            <hr>
+            <p class="date"><b>{{ article.author.name }}</b> @{{ article.author.username }}
+                <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-dot" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                </svg>{{ article.publish }}
+            </p>
+            <p class="article-body">{{ article.body|markdown }}</p>
+
+            <!-- Comment form start -->
+            <div style="margin:50px 0px;">
+                <form onsubmit="commentSubmit(event)">
+                    <textarea name="comment" id="commentinput" cols="30" rows="2" required="true" class="form-control"></textarea>
+                    <button type="submit" class="btn btn-success" style="margin-top:10px;float:right;">Comment</button>
+                </form>
+            </div>
+            <!-- Comment form end -->
+
+
+            {% with comments.count as total_comments %}
+            <h5 style="color: #0088ff">{{ total_comments }} Comment{{ total_comments|pluralize }}</h5>
+            <hr style="margin-top: 0">
+            {% endwith %}
+
+            <div id="commentList" commentSubmitUrl="{% url 'blog:submit_comment' %}" articleid="{{article.id}}">
+                {% include 'snippets/blog_comments.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+    
+    <script>
+        function openCommentReply(event){
+            event.preventDefault()
+            var commentid = event.target.attributes.commentid.value
+            document.getElementById(`${commentid}commentReply`).style.display = 'initial'
+        }
+
+
+        function commentSubmit(event){
+            event.preventDefault()
+            var comment = document.getElementById('commentinput').value
+            if($.trim(comment) == ''){
+                alert('Comment can\'t be leave blank.')
+                return;
+            }
+            var articleid = document.getElementById('commentList').attributes.articleid.value
+            var url = document.getElementById('commentList').attributes.commentSubmitUrl.value
+            $.ajax({
+                url:url,
+                type:'POST',
+                data:{
+                    comment:comment,
+                    articleid:articleid,
+                    'csrfmiddlewaretoken': '{{csrf_token}}'
+                },
+                success:function(data){
+                   document.getElementById('commentList').innerHTML = data
+                   document.getElementById('commentinput').value = ' '
+                },
+                error:function(err){
+                    console.log(err)
+                }
+            })
+        }
+
+
+        function commentReplySubmit(event){
+            event.preventDefault()
+            var commentid = event.target.attributes.commentid.value
+            var comment = document.getElementById(`${commentid}commenttext`).value
+            if($.trim(comment) == ''){
+                alert('Comment can\'t be leave blank.')
+                return;
+            }
+            var url = event.target.attributes.commentReplyUrl.value
+            $.ajax({
+                url:url,
+                type:'POST',
+                data:{
+                    commentid:commentid,
+                    comment:comment,
+                    'csrfmiddlewaretoken': '{{csrf_token}}'
+                },
+                success:function(data){
+                    document.getElementById('commentList').innerHTML = data
+                }
+            })
+        }
+
+    </script>
+
+{% endblock %}

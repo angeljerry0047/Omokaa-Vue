@@ -1,0 +1,154 @@
+{% load static %}
+
+<style>
+    .account {
+        padding: 10px 0px;
+        margin: 20px auto;
+    }
+
+    .dropdown p {
+        margin: 0px auto;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .profile_img img {
+        height: 40px;
+        width: 40px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background-color: white;
+    }
+
+    .upload {
+        height: 100px;
+        width: 100px;
+        border: 1px solid gray;
+        border-radius: 50%;
+        font-size: 50px;
+        background-color: aqua;
+        color: gray;
+        display: block;
+        margin: 10px auto;
+        align-content: center;
+    }
+
+    .load {
+        margin: 0px 30px;
+    }
+
+    .profile h6 {
+        text-align: center;
+    }
+
+    .profile p {
+        text-align: center;
+    }
+
+    #extend_profile_form fieldset {
+        display: none;
+    }
+
+    /* #extend_profile_form fieldset:not(:first-of-type) {
+       display: none;
+   } */
+
+</style>
+<div class="account_info">
+    <div class="dropdown">
+        <div class="row account" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                     aria-expanded="false"  >
+            <div class="profile_img col-auto" align="right">
+                {% if request.user.profile_pic %}
+                <img src="{{request.user.profile_pic.url}}">
+                {% else %}
+                <img src="{{defaultImage.profile_image.url}}">
+                {% endif %}
+            </div>
+            <div class="col">
+                <p><b>{% if request.user.is_authenticated %}{{request.user.name}}{% else %}Guest{% endif %}</b><span style="color: #666666; font-size: 12px">{% if request.user.is_authenticated %} @{{request.user.username}}{% else %} @Anonymous{% endif %}</span></p>
+            </div>
+        </div>
+        
+        <div class="profile">
+            <div class="progress mt-2 mb-2">
+                <div class="progress-bar active" role="progressbar" aria-valuemin="0"
+                     aria-valuemax="100"></div>
+            </div>
+            <div class="alert alert-success" style="display: none;"></div>
+            <form id="extend_profile_form" action="/account/extend/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset>
+                    <h6>Who are you?</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" checked name="user_type" id="individual"
+                               value="1">
+                        <label class="form-check-label" for="individual">Individual</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="user_type" id="business"
+                               value="2">
+                        <label class="form-check-label" for="business">Business</label>
+                    </div>
+                    <input type="submit" name="next" id="whoNext" class="next btn btn-info pull-right" value="Submit"/>
+                </fieldset>
+                <fieldset>
+                    <h6 id="dateRegistration">Date of Birth</h6>
+                    <div class="form-group">
+                        <input type="date" id="datepicker" name="date_birth" class="mt-2">
+                    </div>
+                    <input type="submit" name="next" class="next btn btn-info pull-right" value="Submit"/>
+                </fieldset>
+                <fieldset>
+                    <h6 id="uploadPhoto">Upload profile photo</h6>
+                    <div class="form-group">
+                        <span class="btn btn-success fileinput-button">
+                            <span>Select Image</span>
+                            <!-- <input type="file" name="files[]" id="files" multiple accept="image/jpeg, image/png, image/gif,"><br /> -->
+                            <input type="file" name="profile_pic" id="profile_pic"
+                                   accept="image/jpeg, image/png, image/gif,"><br/>
+                            
+                        </span>
+                        <img id="cropped_image" class="text-center"/>
+                        <!-- <input type="file" name="profile_pic" id="profile_pic"  accept="image/jpeg, image/png, image/gif,"> -->
+                    </div>
+                    <input type="submit" name="next" class="next btn btn-info pull-right" value="Submit"/>
+                </fieldset>
+                <fieldset>
+                    <h6 id="uploadID">Upload Indentification Documents</h6>
+                    <p>(This will not be shared with the public)</p>
+                    <div class="form-group">
+                        <!-- <input type="file" name="identity" id="identity" > -->
+                        <span class="btn btn-success fileinput-button">
+                            <span>Select File</span>
+                            <input type="file" name="identity" id="identity" accept="image/jpeg, image/png, image/gif,">
+                        </span>
+                    </div>
+                    <input type="submit" name="submit" class="next btn btn-primary pull-right" value="Submit"/>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div id="cropimageModal" class="modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8 text-center">
+                            <div id="image_demo" style="width:350px; margin-top:30px"></div>
+                        </div>
+                        <div class="col-md-4" style="padding-top:30px;">
+                            <br/>
+                            <br/>
+                            <br/>
+                            <button class="btn btn-success crop_image">Crop Image</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

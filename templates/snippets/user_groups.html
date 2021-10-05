@@ -1,0 +1,5 @@
+{% for user_group in request.user.usergroup_set.all %}
+                <a href="#" onclick="loadPostSection(event)" groupname="{{user_group.name}}" groupurl="{% url 'single_group' user_group.id %}">
+                	<p style="pointer-events:none;">{{user_group.name}}</p>
+                </a>
+                {% endfor %}

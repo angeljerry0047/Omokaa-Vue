@@ -1,0 +1,241 @@
+{% load static %}
+{% load customtags %}
+<div class=""> 
+
+    <button type="button" id="deleteBtn" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal" style="display:none">
+</button>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Deleting Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Ary you sure want to deletethis post?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">cancel</button>
+        <button id="confirmDeleteBtn" type="button" class="btn btn-danger" data-dismiss="modal" onclick="deletePost(event)" deleteurl="{% url 'delete_post' %}">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" id="reportBtn" class="btn btn-primary" data-toggle="modal" data-target="#reportModal" style="display:none">
+</button>
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Report Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Select if the post is fraud or spam?
+      </div>
+      <div class="modal-footer">
+        <button id="confirmFraudBtn" type="button" class="btn btn-danger" data-dismiss="modal" onclick="fraudPost(event)" reporturl="{% url 'report_post' %}">Fraud</button>
+        <button id="confirmSpamBtn" type="button" class="btn btn-warning" data-dismiss="modal" onclick="spamPost(event)" reporturl="{% url 'report_post' %}">Spam</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% if results %}
+{% for result in results %}
+{% if post.thumbnail %}
+<div class="modal fade" id="postModal{{result.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+    
+    <div class="carousel-item active">
+      <img src="{{result.thumbnail.url}}"  class="d-block w-100" alt="...">
+    </div>
+   
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% for result in results %}
+<div class="post">
+    <div class="col-12 post-detail">
+                <div class="row">
+                  <div class="profile-pic col-auto"> 
+                               <a href="{% url 'user_posts' result.author.id %}">
+                                    {% if result.author.profile_pic %}
+                                    <img src="{{result.author.profile_pic.url}}">
+                                    {% else %}
+                                    <img src="{{defaultImage.profile_image.url}}">
+                                    {% endif %}
+                              </a>
+                            </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col">
+                                           <a href="{%  url 'user_posts' result.author.id %}"> <b>{{result.author.name}}</b> @{{result.author.username}}</a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <p><span style="color: #aaa; font-size: 14px">{{result.date_published}}</span>
+                            {% if result.is_promotional %}
+                            <button class="pull-right promoted">
+                                <svg style="margin: -4px 5px auto 0" width="1em" height="1em" viewBox="0 0 16 16"
+                                     class="bi bi-star-fill" fill="#0088ff" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
+                                Promoted
+                            </button>
+                            {% endif %}
+                        </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-1" align="right" style="position:relative;">
+                                   <div class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <svg width="1.2em" height="1.2em" viewBox="0 0 16 16"
+                                         class="bi bi-three-dots-vertical"
+                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                    </svg>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#" onclick="copyUrl(event)" postURL="{% url 'post_detail' result.id result.date_published.year result.date_published.month result.date_published.day result.slug %}">copy url</a>
+    {% if request.user == result.author %}
+    <a class="dropdown-item" href="#" onclick="openDeletePopUp(event)" postid={{result.id}}>Delete Post</a>
+    {% endif %}
+    {% if request.user != result.author %}
+    <a class="dropdown-item" href="#" onclick="openReportPopUp(event)" postid={{result.id}}>Report Post</a>
+    {% endif %}
+  </div>
+                                </div>
+                            </div>
+                            </div>
+           <p><span class="location" style="color: #6ebbff; margin-left: 0; font-size: 12px;"><i
+                style="color: #0088ff; font-size: 14px;" class="fa fa-fw fa-map-marker"></i> {{result.location}}</span>
+        </p>
+                            <div class="row" style="margin-top: -30px">
+                                <div class="col">
+                                    <p class="post-details">{{result.detail|urlizetrunc:30|linebreaks}}</p>
+                                    {% if post.thumbnail %}
+                                    <div class="thumbnail" style="overflow:hidden;">
+                                    <img src="{{result.thumbnail.url}}" alt="" data-toggle="modal" data-target="#postModal{{result.id}}" style="width:100%;">
+                                </div>
+                                {% endif %}
+                                </div>
+                            </div>
+                            <hr class="mt-0 mb-1">
+                            <div class="row mb-2" align="center">
+                 <div class="col-xs-6 col-auto">
+                  <a href="#" {% if request.user.id|hasReviewed:result.id %} onclick="openUpdateFeedback(event)" {% else %} onclick="openfeedback(event)" {% endif %} resultid={{result.id}} style="margin-top: -5px;text-decoration:none;" feedbackfetchurl="{% url 'feedback_fetch' %}">
+                    <svg style="margin: -5px 0 auto" width="1em" height="1em" viewBox="0 0 16 16"
+                         class="bi bi-star-fill noPointer" fill="#666666" xmlns="http://www.w3.org/2000/svg">
+                        <path class="noPointer" d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                    </svg>
+
+                     <span class="noPointer" style="margin: 14px 5px 0;"
+                      id="{{result.id}}rating">{{result.id|averageRating}}<span
+                        style="margin: -10px 0 auto 10px; font-size: 16px; font-weight: bold">|</span></span>
+                <span class="noPointer" id="{{result.id}}rating_count"
+                      style="color: black;">{{result.postrating_set.all|totalQuery}} Reviews</span>
+                  </a>
+                </div>
+                <div class="col chat">
+                     {% if request.user == result.author %}
+                <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-chat-left-dots-fill"
+                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                </svg>
+                <span style="color: black"> Chat</span>
+                {% else %}
+                <a href="{% url 'messages_fetch' result.id %}">
+                    <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-chat-left-dots-fill"
+                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    </svg>
+                    <span style="color: black"> Chat</span>
+                </a>
+                {% endif %}
+                </div>
+                <div class="col">
+                {% if result.type.name == 'Work' or result.type.name == 'work' %}
+                <a href="{% url 'hire_proposals' result.id %}">
+                    <button class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white">Hire
+                    </button>
+                </a>
+                {% elif result.type.name == 'Buy' or result.type.name == 'buy' %}
+                <a href="{% url 'sell_proposals' result.id %}">
+                    <button class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white">Sell
+                    </button>
+                </a>
+                {% elif result.type.name == 'Hire' or result.type.name == 'hire' %}
+                <a href="{% url 'work_proposals' result.id %}">
+                    <button class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white">Work
+                    </button>
+                </a>
+                {% elif result.type.name == 'Sell' or result.type.name == 'sell' %}
+                <a href="{% url 'buy_proposals' result.id %}">
+                    <button class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white">Buy
+                    </button>
+                </a>
+                {% endif %}
+            </div>
+            </div>
+            <div class="row">
+              <form style="width:100%;display:none;" onsubmit="feedbackSubmit(event)" id="{{result.id}}feedbackform" resultid={{result.id}} feedbackurl={% url 'feedback' %}>
+                <div class="rating"> 
+                  <input type="radio" name="rating" value="5" id="result{{result.id}}5">
+                  <label for="result{{result.id}}5">☆</label> 
+                  <input type="radio" name="rating" value="4" id="result{{result.id}}4">
+                  <label for="result{{result.id}}4">☆</label> 
+                  <input type="radio" name="rating" value="3" id="result{{result.id}}3">
+                  <label for="result{{result.id}}3">☆</label>
+                  <input type="radio" name="rating" value="2" id="result{{result.id}}2">
+                  <label for="result{{result.id}}2">☆</label> 
+                  <input type="radio" name="rating" value="1" id="result{{result.id}}1">
+                  <label for="result{{result.id}}1">☆</label>
+              </div>
+                <textarea name="feedback" style="width:100%;" id="{{result.id}}starfeedback" rows="3" required></textarea>
+                <button type="submit" class="btn btn-success" style="float:right">Submit</button>
+              </form>
+                        </div>
+                   
+                </div>
+                <hr class="d-xs-block d-sm-block d-md-none mt-0 mb-1">
+                </div>
+                {% empty %}
+                      <div class="content">
+                         <h3>Zero Results Found</h3>
+                      </div>
+                {% endfor %}
+            
+

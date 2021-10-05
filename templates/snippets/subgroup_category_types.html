@@ -1,0 +1,10 @@
+<ul style="list-style:none;margin:1px 0px;">
+{% for category in categories %}
+	<li>
+		<button class="btn btn-sm btn-light" style="width:100%;margin:5px 0px;" categoryid={{category.id}} onclick="loadSubCategory(event)">{{category.name}}</button>
+		<div>
+			
+		</div>
+	</li>
+{% endfor %}
+</ul>

@@ -1,0 +1,8 @@
+pesapas/local_setting.py
+__pycache__/
+__pycache__/*
+*/__pycache__/*
+*/__pycache__/
+
+pesapas/media/
+db.sqlite3

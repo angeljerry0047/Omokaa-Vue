@@ -1,2 +1,1 @@
-# Omokaa-Vue
-Vue.js
+# omokaa

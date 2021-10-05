@@ -1,0 +1,120 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+
+<style>
+    .orders h3{
+        background-color: white;
+        padding: 50px;
+        text-align: center;
+        border-radius: 5px;
+        margin: 60px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 content">
+            <div class="orders">
+                <h3>No Orders to show. Make a transaction to create an order</h3>
+                <!--<h2 style="color: black; text-align: center;">Pending Orders</h2>
+                <hr>
+                <table style="width:100%">
+                    <tr>
+                        <th>No.</th>
+                        <th>Order Id</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr class="order_id">
+                        <td>2</td>
+                        <td>QP94BDSHIH851</td>
+                        <td>HP laptop for sale...</td>
+                    </tr>
+                    <tr class="order_id">
+                        <td>1</td>
+                        <td>BF51EDKLUD675</td>
+                        <td>German Shepherd puppy wanted...</td>
+                    </tr>
+                </table>-->
+            </div>
+            <div class="orders-details" style="display: none">
+                <h2 style="color: black; text-align: center;">Order Id: BF51EDKLUD675</h2>
+                <hr>
+                <h1>Post details here as displayed at the homepage</h1>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <p>Status</p>
+                    </div>
+                    <div class="col">
+                        <p>Pending</p>
+                    </div>
+                    <button class="btn sm-btn btn-success">Change Status</button>
+                </div>
+                <hr>
+            </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-block">
+            <div class="content">
+                <h2 style="color: black; text-align: center;">Your Orders</h2>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <p>Pending</p>
+                    </div>
+                    <div class="col-2">
+                        <p>0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>In-Progress</p>
+                    </div>
+                    <div class="col-2">
+                        <p>0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>Delivered</p>
+                    </div>
+                    <div class="col-2">
+                        <p>0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>Cancelled</p>
+                    </div>
+                    <div class="col-2">
+                        <p>0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>Completed</p>
+                    </div>
+                    <div class="col-2">
+                        <p>0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+<script>
+    $(document).ready(function () {
+        $(".order_id").click(function () {
+            $(".orders-details").show()
+            $(".orders").hide()
+        });
+    });
+</script>
+{% endblock %}

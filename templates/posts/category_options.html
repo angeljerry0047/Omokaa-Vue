@@ -1,0 +1,13 @@
+{% if category %}
+<option value="">Category</option>
+{% endif %}
+{% for category in category %}
+<option value="{{ category.pk }}">{{ category.name }}</option>
+{% endfor %}
+
+{% if sub_category %}
+<option value="">Sub-Category</option>
+{% endif %}
+{% for sub_category in sub_category %}
+<option value="{{ sub_category.pk }}">{{ sub_category.name }}</option>
+{% endfor %}

@@ -1,0 +1,230 @@
+    h1{
+        color: green;
+    }
+    h2{
+        color: blue;
+    }
+
+    p { word-break: normal }
+
+    .register{
+        width: 100%;
+        border: 2px solid #6a6a6a;
+        border-radius: 5%;
+        padding: 25px;
+    }
+
+
+    .dropdown-toggle::after{
+        display: none;
+    }
+
+
+    .chatMessage{
+        position: absolute;
+        bottom: 0px;
+        width:280px;
+        padding: 3px 10px;
+        background: #21d2db;
+    }
+
+
+    .user-info-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top:10px;
+    margin-bottom: -1px;
+    padding-top: 90px;
+    padding-bottom: 30px;
+    border: 1px solid #e1e7ec;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    overflow: hidden;
+    background: white;
+
+}
+
+.user-info-wrapper .user-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background-position: center;
+    background-color: #f5f5f5;
+    background-repeat: no-repeat;
+    background-size: cover
+}
+
+
+
+.user-info-wrapper .user-cover .tooltip .tooltip-inner {
+    width: 230px;
+    max-width: 100%;
+    padding: 10px 15px
+}
+
+.user-info-wrapper .info-label {
+    display: block;
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 13px;
+    background-color: #fff;
+    color: #606975;
+    font-size: 12px;
+    line-height: 26px;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.18);
+    cursor: pointer
+}
+
+.user-info-wrapper .info-label>i {
+    display: inline-block;
+    margin-right: 3px;
+    font-size: 1.2em;
+    vertical-align: middle
+}
+
+.user-info-wrapper .user-info {
+    position: relative;
+    width: 100%;
+    padding: 0 18px;
+    z-index: 5
+}
+
+
+.user-detail{
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-info-wrapper .user-info .user-avatar,
+.user-info-wrapper .user-info .user-data {
+    display: table-cell;
+    vertical-align: top
+}
+
+.user-info-wrapper .user-info .user-avatar {
+    position: relative;
+    width: 115px
+}
+
+.user-info-wrapper .user-info .user-avatar>img {
+    display: block;
+    width: 100%;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    background: white;
+}
+
+.user-info-wrapper .user-info .user-avatar .edit-avatar {
+    display: block;
+    position: absolute;
+    top: -2px;
+    right: 2px;
+    width: 36px;
+    height: 36px;
+    transition: opacity .3s;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #606975;
+    line-height: 34px;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    opacity: 0;
+    text-align: center;
+    text-decoration: none
+}
+
+.user-info-wrapper .user-info .user-avatar .edit-avatar::before {
+    font-family: feather;
+    font-size: 17px;
+    content: '\e058'
+}
+
+.user-info-wrapper .user-info .user-avatar:hover .edit-avatar {
+    opacity: 1
+}
+
+.user-info-wrapper .user-info .user-data {
+    padding-top: 20px;
+    padding-left: 12px
+}
+
+.user-info-wrapper .user-info .user-data h4 {
+    margin-bottom: 2px
+}
+
+.user-info-wrapper .user-info .user-data span {
+    display: block;
+    color: #9da9b9;
+    font-size: 13px
+}
+
+
+/* stars */
+
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center
+}
+
+.rating>input {
+    display: none
+}
+
+.rating>label {
+    position: relative;
+    width: 1em;
+    font-size: 2.7em;
+    color: #FFD600;
+    cursor: pointer
+}
+
+.rating>label::before {
+    content: "\2605";
+    position: absolute;
+    opacity: 0
+}
+
+.rating>label:hover:before,
+.rating>label:hover~label:before {
+    opacity: 1 !important
+}
+
+.rating>input:checked~label:before {
+    opacity: 1
+}
+
+.rating:hover>input:checked~label:before {
+    opacity: 0.4
+}
+
+.interestLabel{
+    margin-bottom: 0px;
+}
+
+
+.emoji{
+    margin-left: 7px;
+    cursor:pointer;
+    margin-bottom:0px;
+    font-size:27px;
+}
+
+.noPoint{
+    pointer-events: none;
+}
+
+
+
+    .profile_img img {
+        height: 40px;
+        width: 40px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background-color: white;
+    }

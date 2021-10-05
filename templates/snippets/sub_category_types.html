@@ -1,0 +1,8 @@
+<ul style="list-style:none;margin:2px 0px;">
+{% for category in sub_categories %}
+	<li style="font-size:12px;margin:2px 0px;">
+		<input type="checkbox" name="sub_categories" value={{category.id}} subcategoryid={{category.id}}>
+        <label class="interestLabel" for={{category.name}} style="font-size:12px;">{{category.name}}</label> 
+	</li>
+{% endfor %}
+</ul>

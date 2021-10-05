@@ -1,0 +1,213 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load customtags %}
+{% block content %}
+<style>
+
+	.comment{
+        border-radius: 10px;
+        margin: 10px;
+        background-color: white;
+        padding: 10px 20px;
+        width: 100%;
+    }
+
+    .post-form {
+        margin: 15px auto 10px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .categ select {
+        padding: 0px;
+        font-size: 14px;
+        background-color: #f5f5f5;
+    }
+
+    .describe textarea {
+        padding: 10px 20px;
+        margin: 10px auto;
+        border-radius: 10px;
+        min-height: 50px;
+        max-height: 200px;
+        resize: none;
+        overflow-y: hidden;
+        font-size: 16px;
+    }
+
+    .describe button {
+        width: 100px;
+        margin-right: 10px;
+        border-radius: 10px;
+        letter-spacing: 3px;
+        font-weight: bold;
+    }
+
+    #id_location {
+        border-bottom: 1px solid gray;
+        border-radius: 0px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .profile-pic img {
+        height: 60px;
+        width: 60px;
+        margin: 20px;
+    }
+
+    .profile_img img {
+        height: 60px;
+        width: 60px;
+    }
+
+    /* This is copied from https://github.com/blueimp/jQuery-File-Upload/blob/master/css/jquery.fileupload.css */
+    .fileinput-button {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fileinput-button input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        opacity: 0;
+        -ms-filter: "alpha(opacity=0)";
+        font-size: 200px;
+        direction: ltr;
+        cursor: pointer;
+    }
+
+    .thumb {
+        height: 80px;
+        width: 100px;
+        border: 1px solid #000;
+    }
+
+    ul.thumb-Images li {
+        width: 120px;
+        float: left;
+        display: inline-block;
+        vertical-align: top;
+        height: 120px;
+    }
+
+    .img-wrap {
+        position: relative;
+        display: inline-block;
+        font-size: 0;
+    }
+
+    .img-wrap .close {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        z-index: 100;
+        background-color: #d0e5f5;
+        padding: 5px 2px 2px;
+        color: #000;
+        font-weight: bolder;
+        cursor: pointer;
+        opacity: 0.5;
+        font-size: 23px;
+        line-height: 10px;
+        border-radius: 50%;
+    }
+
+    .img-wrap:hover .close {
+        opacity: 1;
+        background-color: #ff0000;
+    }
+
+    .FileNameCaptionStyle {
+        font-size: 12px;
+    }
+</style>
+
+<div class="container">
+	<div class="row">
+	{% include 'comments/hire_comments.html' %}
+	</div>
+    <div class="row" id="CommentComments" getCommentUrl="{% url 'load_hire_comment_reply' %}" commentid={{comments.0.id}}>
+
+    </div>
+	<div class="row">
+		<div class="comment">
+			<form id="commentForm" commenturl="{% url 'create_hire_reply' %}" onsubmit="submitComment(event)" commentid={{comments.0.id}} >
+				 <div class="form-group">
+    			<label for="exampleFormControlTextarea1">Comment</label>
+   				 <textarea class="form-control textarea" id="CommentInput" rows="6" required></textarea>
+  				</div>
+  				<button id="enabledCommentButton" type="submit" class="btn btn-success" style="float:right;">Submit</button>
+                <button id="disabledCommentButton" type="submit" class="btn btn-success" style="float:right;display:none" disabled=""><div class="spinner-border" role="status">
+                </div></button>
+			</form>
+        </div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+    <script>
+        loadComments()
+ 
+        function submitComment(event){
+            event.preventDefault()
+            var commentBox = document.getElementById('CommentInput')
+            var enableButton = document.getElementById('enabledCommentButton')
+            var disableButton = document.getElementById('disabledCommentButton')
+
+            var message = document.getElementById('CommentInput').value
+            var url = event.target.attributes.commenturl.value
+            var commentid = event.target.attributes.commentid.value
+
+            enableButton.style.display = 'none'
+            disableButton.style.display = 'inherit'
+            commentBox.disabled = true
+
+            $.ajax({
+                type:'POST',
+                url:url,
+                data:{
+                    commentId:commentid,
+                    message:message,
+                    csrfmiddlewaretoken:'{{csrf_token}}'
+                },
+                success:function(data){
+                   loadComments()
+                   commentBox.disabled = false
+                   commentBox.value = ''
+                   enableButton.style.display = 'inherit'
+                   disableButton.style.display = 'none'
+                },
+                error:function(err){
+                    console.log(err)
+                    commentBox.disabled = false
+                    enableButton.style.display = 'inherit'
+                    disableButton.style.display = 'none'
+                }
+                })   
+        }
+
+        function loadComments(){
+        var commentUrl = $("#CommentComments").attr("getCommentUrl");
+        var commentId = $("#CommentComments").attr("commentid")
+        $.ajax({                       // initialize an AJAX request
+        url: commentUrl,                    // set the url of the request (= localhost:8000/app/ajax/load-zones/)
+        data: {
+          'commentId': commentId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_zones` view function
+          $("#CommentComments").html(data);  // replace the contents of the Zone input with the data that came from the server
+        },
+        alert: function(err){
+            console.log(err)
+        }
+      });
+        }
+    </script>
+{% endblock %}

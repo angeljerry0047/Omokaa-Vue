@@ -1,0 +1,567 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load customtags %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+
+<style>
+    .not-inbox {
+        border-bottom: 1px solid #666666;
+        margin-bottom: 20px;
+    }
+
+    .content {
+        margin-top: 15px;
+        background-color: white;
+        padding: 5px 20px;
+        text-align: justify;
+        border-radius: 5px;
+    }
+
+    .profile-pic img {
+        height: 40px;
+        width: 40px;
+        float: right;
+        margin: 2px auto;
+    }
+
+    .ms-title h5 {
+        text-align: left;
+        margin-top: 10px;
+    }
+
+    .texts {
+        margin: 10px auto;
+    }
+
+    .my-text {
+        text-align: right;
+        background-color: #d0e5f5;
+        border-radius: 4px;
+    }
+
+    .other-text {
+        text-align: left;
+        background-color: #efefef;
+        border-radius: 4px;
+    }
+
+
+    .scroll-messages {
+        overflow-y: scroll;
+        max-height: inherit;
+        text-align: justify;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+
+    .scroll-messages::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scroll-messages {
+        -ms-overflow-style: none;
+    }
+
+    .con-messages {
+        height: inherit;
+    }
+
+    .con-inbox p {
+        margin: 0px;
+    }
+
+/*    .con-inbox hr {
+        margin: 10px 0px;
+    }*/
+
+    .counter {
+        color: red;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+
+    .messageText + p{
+       margin-bottom: 0px;
+       padding-bottom: 0px;
+       font-size: 22px;
+       word-break: break-all;
+    }
+
+
+    @media (max-width: 556px) {
+        .other-text{
+            margin-left: 20px;
+        }
+
+        .messageText + p{
+            font-size: 15px;
+        }
+
+    }
+
+    @media (min-width: 556px) {
+        .not-inbox {
+            padding: 0;
+        }
+
+        .texts p{
+            font-size: 14px;
+        }
+
+    }
+
+    @media (min-width: 992px){
+        .messages-container{
+            padding: 0 80px;
+        }
+    }
+
+</style>
+
+
+<button type="button" id="fileBtn" class="btn btn-primary" data-toggle="modal" data-target="#fileModal"
+        style="display:none">
+</button>
+<div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload File</h5>
+                <button id="closeModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Select a file to upload.
+                <form style="display:flex;flex-direction: column;" method="POST" enctype="multipart/form-data"
+                      onsubmit="uploadFile(event)" documentuploadurl="{% url 'upload_chat_document' %}">
+                    <input type="file" required id="chat_document">
+                    <button id="submitFileBtn" type="submit" class="btn btn-primary"
+                            style="max-width:100px;margin-top:20px;">Upload
+                    </button>
+                    <button id="uploadingFileBtn" type="button" class="btn btn-primary"
+                            style="max-width:100px;margin-top:20px;display:none;" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row messages-container">
+        <div class="col-lg-8 {% if hideMessage %} d-none d-lg-block {% else %} col-md-12 {% endif %}">
+            {% if chat %}
+            <div class="content con-messages">
+                <div class="row ms-title">
+                    <div class="col-2 profile-pic">
+                        {% if partener.profile_pic %}
+                        <img src="{{partener.profile_pic.url}}">
+                        {% else %}
+                        <img src="{{defaultImage.profile_image.url}}">
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        <p style="margin: 0"><b>{{partener.name}} </b><span style="color: #666666">@{{partener.username}}</span></p>
+                        <p style="margin: 0; color: #0088ff;"><a href="{% url 'post_detail' chat.post.id chat.post.date_published.year chat.post.date_published.month chat.post.date_published.day chat.post.slug %}">{{chat.post.detail|truncatechars:50}}</a></p>
+                    </div>
+                </div>
+                <hr class="mt-1 mb-1">
+
+
+                <div class="scroll-messages" id="chat">
+                    {% for message in chat.chatmessage_set.all %}
+                    {% if message.sender != request.user %}
+                    <div class="row texts">
+                        <div class="col other-text" style="display:flex;align-items:center; border-radius: 4px">
+                            {% if message.is_file %}
+                            <a href={{message.message}} target="_blank">
+                                <svg style="font-size:30px;margin-top:5px;" width="1em" height="1em" viewBox="0 0 16 16"
+                                     class="bi bi-file-earmark-text-fill" fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M2 2a2 2 0 0 1 2-2h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm7 2l.5-2.5 3 3L10 5a1 1 0 0 1-1-1zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                                <p class="messageText" style="font-size:10px;margin-bottom:2px;">
+                                    {{message.filename}}
+                                </p>
+                            </a>
+                            {% else %}
+                            <p class="messageText">
+                                {{message.message|linebreaks}}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-3" style="font-size:13px;">{{message.created_at.time|time:"g:iA"}}</div>
+                    </div>
+                    {% else %}
+                    <div class="row texts">
+                        <div class="col-3" style="font-size:13px;text-align:right;">{{message.created_at.time|time:"g:iA"}}</div>
+                        <div class="col my-text mr-2"
+                             style="display:flex;align-items:center;justify-content:flex-end;text-align:left;flex-wrap:wrap; border-radius: 4px;">
+                            {% if message.is_file %}
+                            <a href={{message.message}} target="_blank">
+                                <svg width="1em" style="font-size:30px;margin-top:5px;" height="1em" viewBox="0 0 16 16"
+                                     class="bi bi-file-earmark-text-fill" fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M2 2a2 2 0 0 1 2-2h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm7 2l.5-2.5 3 3L10 5a1 1 0 0 1-1-1zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                                <p class="messageText" style="text-align:left;font-size:10px;margin-bottom:2px;">
+                                    {{message.filename}}
+                                </p>
+                            </a>
+                            {% else %}
+                            <p class="messageText" style="text-align:left;">{{message.message|linebreaks}}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% empty %}
+                    <div style="margin:40px"></div>
+                    {% endfor %}
+
+                </div>
+                <p style="cursor:pointer;font-size:22px;float:right;display:none;" onclick="hideEmoji(event)"
+                   id="emojiCloser">❌</p>
+                <div class="content" style="border:1px solid grey;display:none" id="emojiSection">
+                    <div class="row" style="display:flex;flex-wrap:wrap">
+                        <p class="emoji" onclick="addEmoji(event)">😆</p>
+                        <p class="emoji" onclick="addEmoji(event)">😃</p>
+                        <p class="emoji" onclick="addEmoji(event)">😄</p>
+                        <p class="emoji" onclick="addEmoji(event)">😁</p>
+                        <p class="emoji" onclick="addEmoji(event)">☺️</p>
+                        <p class="emoji" onclick="addEmoji(event)">😅</p>
+                        <p class="emoji" onclick="addEmoji(event)">😂</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤣</p>
+                        <p class="emoji" onclick="addEmoji(event)">😇</p>
+                        <p class="emoji" onclick="addEmoji(event)">🙃</p>
+                        <p class="emoji" onclick="addEmoji(event)">😉</p>
+                        <p class="emoji" onclick="addEmoji(event)">😛</p>
+                        <p class="emoji" onclick="addEmoji(event)">😝</p>
+                        <p class="emoji" onclick="addEmoji(event)">😜</p>
+                        <p class="emoji" onclick="addEmoji(event)">🧐</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤓</p>
+                        <p class="emoji" onclick="addEmoji(event)">🥳</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤯</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤬</p>
+                        <p class="emoji" onclick="addEmoji(event)">🥵</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤐</p>
+                        <p class="emoji" onclick="addEmoji(event)">😑</p>
+                        <p class="emoji" onclick="addEmoji(event)">🥺</p>
+                        <p class="emoji" onclick="addEmoji(event)">😭</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤑</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤠</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤨</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤧</p>
+                        <p class="emoji" onclick="addEmoji(event)">😷</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤒</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤕</p>
+                        <p class="emoji" onclick="addEmoji(event)">🤭</p>
+                    </div>
+                </div>
+                <form>
+                    <div class="row">
+                        <div class="col-auto">
+                            <p style="cursor:pointer;font-size:32px;float:right;margin-bottom:0px" onclick="displayEmoji(event)"
+                       id="emojiOpener"><svg width="0.8em" height="0.8em" viewBox="0 0 16 16" class="bi bi-emoji-smile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                              <path fill-rule="evenodd" d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683z"/>
+                              <path d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
+                            </svg></p>
+                        </div>
+                        <div class="col-auto">
+                            <p style="cursor:pointer;font-size:27px;float:right;margin-bottom:0px;transform: rotate(45deg);"
+                       onclick="displayFileUploader(event)" id="fileOpener">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-paperclip mt-3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/>
+                                </svg>
+                            </p>
+                        </div>
+                        <div class="col message">
+                            <textarea class="form-control textarea" rows="1" id="chat-message-input" msgType="text"
+                                      filename="default"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-2" style="margin-bottom:100px;">
+                        <div class="col" align="right">
+                            <input type="submit" class="btn btn-success btn-sm" value="send" id="chat-message-submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% else %}
+                <div class="card text-center" style="margin-top:100px;">
+  <div class="card-header">
+    Messages
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Welcome to your Messages</h5>
+    {% if request.user.is_authenticated %}
+    <p class="card-text">Looks like you don't have any messages.</p>
+    {% else %}
+    <p class="card-text">Your messages will be displayed here.</p>
+    {% endif %}
+    <p>Get connected</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Browse Posts</a>
+  </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-4 d-lg-block {% if not hideMessage %} col-md-12 d-none {% endif %}">
+            <div class="content2 con-inbox" id="notifyTag" msgreadurl="{% url 'read_msg_notification' %}">
+                <div class="row not-inbox">
+                    <div class="col">
+                        <h5 style="color: #666666">Inbox</h5>
+                    </div>
+                    <div class=" col-2 col-right">
+                        <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-gear" fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" stroke="lightblue"
+                                  d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
+                            <path fill-rule="evenodd" stroke="lightblue"
+                                  d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                {% if not request.user.is_authenticated %}
+                    <div class="d-md-none d-lg-none">
+                        <h3>Your messages will be dispalyed here</h3>
+                    </div>
+                {% endif %}
+
+
+                {% for conversation in chats %}
+                {% if conversation.chatmessage_set.all.count %}
+                <a href="{% url 'messages_fetch_chat' conversation.id %}"
+                   chatid={{conversation.id}} {% if conversation|singleNotification:request.user.id %} onclick="openMessage(event)" {% endif %}>
+                    <!-- Warning: Don't remove the class noPoint from below tags -->
+                    <!-- Js is using it -->
+                    {% if conversation.user1 == request.user %}
+                    	{% setvar conversation.user2 as msgSender %}
+                    {% else %}
+                    	{% setvar conversation.user1 as msgSender %}
+                    {% endif %}
+                    <div class="row noPoint">
+                        <div class="col-auto profile-pic noPoint">
+                            {% if msgSender.profile_pic %}
+                            <img style="margin-top: -10px" src="{{msgSender.profile_pic.url}}" class="noPoint">
+                            {% else %}
+                            <img style="margin-top: -10px" src="{{defaultImage.profile_image.url}}" class="noPoint">
+                            {% endif %}
+                        </div>
+                        <div class="col noPoint" style="margin-top: -10px">
+                            <table style="width:100%;">
+                                <tr style="font-size: 14px;display:flex;justify-content:space-between;flex-wrap: wrap;">
+                                    <td>
+                                        <p class="noPoint"><b
+                                                style="color: black"
+                                                class="noPoint">{{ msgSender.name }}</b>
+                                            <span style="color: #666666"> @{{ msgSender.username }}</span>
+                                            <span style="font-size:14px;position:absolute;background:#2ab8fb;padding:0px 7px;margin-left:10px;border-radius:50%;color:white;"
+                                                  class="noPoint">
+                           {% if conversation|singleNotification:request.user.id %}
+                           {{ conversation|singleNotification:request.user.id }}
+                           {% endif %}
+                                </span>
+                                        </p>
+                                    </td>
+                                    <td><span class="pull-right" style="color: #666666">{{conversation.lastmessagedate}}</span></td>
+                                </tr>
+                            </table>
+                            <p style="color: #666666; margin: -2px 5px -2px 0; line-height: 20px; font-size: 14px">
+                            	{{ conversation.lastmessage|truncatechars:30 }}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+
+<script>
+    var host = window.location.host
+    var webSocketHost = 'wss://'
+    if (host == '127.0.0.1:8000' || host == 'localhost:8000') {
+        webSocketHost = 'ws://'
+    }
+    var url = webSocketHost + host + '/ws/chat/room/' + '{{chat.post.id}}/';
+    var chatSocket = new WebSocket(url);
+
+    chatSocket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        var message = data.message;
+        var dateOptions = {hour: 'numeric', minute: 'numeric', hour12: true};
+        var datetime = new Date(data['datetime']).toLocaleTimeString('en',
+            dateOptions);
+        var isMe = data.userid == '{{ request.user.id }}';
+        var source = isMe ? 'me' : 'other';
+        var msgType = data.msgType
+        console.log(msgType)
+        var filename = data.filename
+        // var fontSize = $(window).width() <= 556 ? 15 : 15 
+        var fontSize = 14
+        var $chat = $('#chat');
+        if (isMe) {
+            if (msgType == 'file') {
+                $chat.append(`<div class='row texts'>
+                              <div class='col-3' style='font-size:13px;text-align:right;'>${datetime}</div>
+                              <div class='col my-text mr-2' style='display:flex;align-items:center;justify-content:flex-end;text-align:left;flex-wrap:wrap;'>
+                              <a href='${message}' target='_blank'>
+                              <svg style='font-size:30px;margin-top:5px;' width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-file-earmark-text-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
+                              <path fill-rule='evenodd' d='M2 2a2 2 0 0 1 2-2h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm7 2l.5-2.5 3 3L10 5a1 1 0 0 1-1-1zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z'/>
+                              </svg>
+                              <p style='font-size:10px;margin-bottom:2px;' class='messageText'> ${filename} </p>
+                              </a></div></div>`)
+            } else {
+                $chat.append(`<div class='row texts'><div class='col-3' style='font-size:13px;text-align:right;'>${datetime}</div><div class='col my-text mr-2' style='display:flex;align-items:center;justify-content:flex-end;text-align:left;flex-wrap:wrap;'><p style='margin-bottom:2px;font-size:${fontSize}px;' class='messageText'>${message.replace(/\n/g, "<br />")}</p></div></div>`);
+            }
+        } else {
+            if (msgType == 'file') {
+                $chat.append(`
+                        <div class='row texts'>
+                        <div class='col other-text' style='display:flex;align-items:center;'>
+                        <a href='${message}' target='_blank'>
+                        <svg style='font-size:30px;margin-top:5px;' width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-file-earmark-text-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
+                              <path fill-rule='evenodd' d='M2 2a2 2 0 0 1 2-2h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm7 2l.5-2.5 3 3L10 5a1 1 0 0 1-1-1zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z'/>
+                              </svg>
+                        <p style='font-size:10px;margin-bottom:2px;' class='messageText'>${filename}</p>
+                        </a>
+                        </div><div class='col-3' style='font-size:13px;'>${datetime}
+                        </div></div>
+                    `)
+            } else {
+                $chat.append(`<div class='row texts'><div class='col other-text' style='display:flex;align-items:center;'><p style='margin-bottom:2px;font-size:15px;' class='messageText'>${message.replace(/\n/g, "<br />")}</p></div><div class='col-3' style='font-size:13px;'>${datetime}</div></div>`);
+            }
+        }
+        $chat.scrollTop($chat[0].scrollHeight);
+    }
+
+    chatSocket.onclose = function (e) {
+        console.log(e)
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    var $input = $('#chat-message-input');
+    var $submit = $('#chat-message-submit');
+
+    $submit.click(function (event) {
+        event.preventDefault()
+        var message = $input.val();
+        var chatid = '{{chat.id}}';
+        var msgType = $input.attr('msgType')
+        var filename = $input.attr('filename')
+        if (message) {
+            // send message in JSON format
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'chatid': chatid,
+                'msgType': msgType,
+                'filename': filename
+            }));
+            // clear input
+            $input.val('');
+            $input[0].attributes.msgType.value = 'text'
+            $input[0].attributes.filename.value = 'default'
+            // return focus
+        }
+    });
+
+    $input.focus();
+
+
+    function uploadFile(event) {
+        event.preventDefault()
+        document.getElementById('submitFileBtn').style.display = 'none'
+        document.getElementById('uploadingFileBtn').style.display = 'inherit'
+
+        var url = event.target.attributes.documentuploadurl.value
+        var file = document.getElementById('chat_document').files[0]
+        var formdata = new FormData()
+        formdata.append("csrfmiddlewaretoken", '{{csrf_token}}')
+        formdata.append("file", file)
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                document.getElementById('submitFileBtn').style.display = 'none'
+                document.getElementById('uploadingFileBtn').style.display = 'inherit'
+                document.getElementById('chat-message-input').value = data.file_url
+                document.getElementById('chat-message-input').attributes.msgType.value = 'file'
+                document.getElementById('chat-message-input').attributes.filename.value = data.file_name
+                document.getElementById('chat-message-submit').click()
+                document.getElementById('chat_document').value = ''
+                document.getElementById('closeModal').click()
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+    }
+
+    function openMessage(event) {
+        event.preventDefault()
+        var url = $('#notifyTag').attr('msgreadurl')
+        var redirectUrl = event.target.attributes.href.value
+        var chatid = event.target.attributes.chatid.value
+        $.ajax({                       // initialize an AJAX request
+            url: url,                    // set the url of the request (= localhost:8000/app/ajax/load-zones/)
+            data: {
+                'chatid': chatid      // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_zones` view function
+                window.location.replace(redirectUrl)
+            },
+            alert: function (err) {
+                console.log(err)
+            }
+        })
+    }
+
+
+    function displayFileUploader(event) {
+        document.getElementById('fileBtn').click()
+    }
+
+    function addEmoji(event) {
+        var emoji = event.target.innerHTML
+        var inputField = $('#chat-message-input')
+        const inputFieldMessage = inputField.val()
+        newMessage = inputFieldMessage + emoji
+        inputField.val(newMessage)
+    }
+
+
+    function displayEmoji(event) {
+        document.getElementById('emojiSection').style.display = 'inherit'
+        document.getElementById('emojiCloser').style.display = 'inherit'
+        document.getElementById('emojiOpener').style.display = 'none'
+    }
+
+
+    function hideEmoji(event) {
+        document.getElementById('emojiSection').style.display = 'none'
+        document.getElementById('emojiCloser').style.display = 'none'
+        document.getElementById('emojiOpener').style.display = 'inherit'
+    }
+
+</script>
+
+{% endblock %}

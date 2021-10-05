@@ -1,0 +1,1051 @@
+<!doctype html>
+{% load static %}
+{% load customtags %}
+ 
+<html lang="en">
+<head>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XVV975W64L"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XVV975W64L');
+    </script>
+
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://omokaa-assets.s3.us-east-2.amazonaws.com/static/logo/Final_Icon.png" type="image/gif" sizes="16x16">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'accounts/css/main.css' %}?version55">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css">
+    <title>{% block title %} {%endblock%}</title>
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: sans-serif;
+        }
+
+        .navbarsm {
+            padding-bottom: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .bi {
+            color: gray;
+        }
+
+        .navbar-nav {
+            text-align: center;
+            margin: auto;
+        }
+
+        .navbar-menu a {
+            float: left;
+            text-align: center;
+            color: blue;
+            text-decoration: none;
+            font-size: 30px;
+            margin: auto 10px;
+        }
+
+        .nav-pic img {
+            width: 36px;
+            height: 36px;
+            margin-top: 5px;
+        }
+
+        .account-profile img {
+            width: 70px;
+            height: 70px;
+            margin: -40px auto auto;
+            border: 4px solid white;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        .account-profile{
+            margin-top: -20px;
+        }
+
+        #navbarNavAltMarkup {
+            bottom: 50px;
+            position: absolute;
+            width: 100%;
+            overflow-y: scroll !important;
+            max-height: 94vh;
+            background-color: white;
+        }
+
+        .account-menu {
+            background: #0088ff;
+            height: 160px;
+        }
+
+        .profile-edit{
+            color: #0088ff;
+            text-align: right;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .menu-sm h4 {
+            text-align: left;
+        }
+
+        .menu-sm a {
+            text-align: left;
+            margin-left: 30px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #666666;
+            display: block;
+        }
+
+        .ptag-sm {
+            text-align: left;
+            margin-left: 30px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #666666;
+            display: block;
+        }
+
+
+    .addBio{
+        border: none;
+        border-bottom: 1px solid #666666;
+        border-radius: 0;
+        background-color: #f0f2f5;
+        margin-bottom: 20px;
+        padding-bottom: 0;
+        resize: none;
+    }
+
+    .bi-pencil-fill{
+        margin-top: 12px;
+        margin-left: -22px;
+    }
+
+
+        textarea:focus,
+        select:focus,
+        select.form-control:focus,
+        textarea.form-control:focus,
+        input.form-control:focus,
+        input[type=text]:focus,
+        input[type=password]:focus,
+        input[type=email]:focus,
+        input[type=number]:focus,
+        [type=text].form-control:focus,
+        [type=password].form-control:focus,
+        [type=email].form-control:focus,
+        [type=tel].form-control:focus,
+        [contenteditable].form-control:focus {
+            box-shadow: inset 0 -1px 0 #ddd;
+            outline: none;
+        }
+        .content {
+            margin-top: 10px;
+            padding: 5px 30px;
+            text-align: justify;
+            border-radius: 5px;
+        }
+
+
+        .addBio{
+            margin-left:10px;
+        }
+
+        .bi:hover {
+            color: blue;
+        }
+
+        .bi:active {
+            color: blue;
+        }
+
+        .textarea {
+            resize: none;
+            margin-top: 10px;
+        }
+
+        .btn-sm {
+            padding: 2px 15px;
+        }
+
+        .droper {
+            font-size: 16px;
+            color: #666666;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            padding-top: 10px;
+            border-radius: 50%;
+            background-color: #f0f2f5;
+            cursor: pointer;
+        }
+
+        .profile-pic img {
+            height: 40px;
+            width: 40px;
+            margin: 0 10px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: white;
+        }
+
+        .menu-content{
+            background-color: white;
+            padding: 20px 50px;
+            border-radius: 5px;
+            text-align: justify;
+        }
+
+        .menu-content p{
+            font-size: 14px;
+            color: #222222;
+        }
+
+        .menu-content h1{
+            font-size: 40px;
+            color: #0088ff;
+            font-weight: bold;
+            text-decoration: underline;
+            text-align: center;
+        }
+
+        .menu-content h2{
+            font-size: 25px;
+            color: #0088ff;
+        }
+
+        .menu-content h3{
+            font-size: 20px;
+        }
+
+        .menu-content h5{
+            color: #666666;
+        }
+
+        @media (min-width: 576px) {
+
+            .navbar-menu a {
+                float: left;
+                text-align: center;
+                color: blue;
+                text-decoration: none;
+                font-size: 30px;
+                margin: auto 40px;
+            }
+        }
+
+        @media only screen and (min-width: 768px) {
+            body {
+                background-color: #f0f2f5;
+            }
+
+            .brand-icon img {
+                width: 40px;
+                height: 40px;
+                margin-top: -5px;
+            }
+
+            .colnav a {
+                font-size: 20px;
+                margin: 2px 20px auto auto;
+            }
+        }
+
+        @media only screen and (min-width: 992px) {
+
+            .brand-icon img {
+                width: 100%;
+                min-height: 40px;
+                height: auto;
+                margin-top: -10px;
+            }
+
+            .navbar-md{
+                text-align: center;
+            }
+
+            .navbar-md a {
+            }
+        }
+
+        @media only screen and (min-width: 1200px) {
+
+        }
+
+    </style>
+</head>
+<body>
+
+
+<!------- Mobile Menu ------->
+
+<nav class="navbar-light bg-white fixed-bottom d-md-none navbarsm">
+    <div class="navbar-nav">
+        <div class="row navbar-menu" style="margin: 0px auto;">
+            <div class="col">
+                
+                <a class="" href="{% url 'home' %}">
+                    {% url 'home' as home_url %}
+                    {% if request.path == home_url %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36.364" height="32" viewBox="0 0 36.364 32">
+                      <g id="budicon-home" transform="translate(0 -1)">
+                        <path id="Path_34" data-name="Path 34" d="M36.128,17.191l-17.455-16a.729.729,0,0,0-.983,0l-17.455,16a.727.727,0,0,0,.983,1.072L4.364,15.38V30.818A2.182,2.182,0,0,0,6.545,33H29.818A2.182,2.182,0,0,0,32,30.818V15.38l3.145,2.883a.727.727,0,0,0,.983-1.072Z" transform="translate(0 0)" fill="#08f"/>
+                      </g>
+                    </svg>
+                    {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36.364" height="32" viewBox="0 0 36.364 32">
+                          <g id="budicon-home" transform="translate(0 -1)">
+                            <path id="Path_34" data-name="Path 34" d="M36.128,17.191l-17.455-16a.729.729,0,0,0-.983,0l-17.455,16a.727.727,0,0,0,.983,1.072L4.364,15.38V30.818A2.182,2.182,0,0,0,6.545,33H29.818A2.182,2.182,0,0,0,32,30.818V15.38l3.145,2.883a.727.727,0,0,0,.983-1.072Z" transform="translate(0 0)" fill="#fff" stroke="#666"/>
+                          </g>
+                        </svg>
+                    {% endif %}
+                </a>
+            </div>
+            <div class="col">
+                <a class="{% if request.path == search_url %}active{% endif %}" href="{% url 'search' %}">
+                     {% url 'search' as search_url %}
+                     {% if request.path == search_url %}
+                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search bi-nav"
+                         fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z" fill="#08f"/>
+                        <path fill-rule="evenodd"
+                              d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z" fill="#08f"/>
+                    </svg>
+                     {% else %}
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search bi-nav"
+                         fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+                        <path fill-rule="evenodd"
+                              d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+                    </svg>
+                    {% endif %}
+                </a>
+            </div>
+            <div class="col">
+                <a class="" href="{% url 'notifications' %}" style="position:relative;">
+                        <span style="font-size:10px;position:absolute;background:#0088ff;padding:0px 4px;border-radius:50%;color:white;margin-top:10px;">
+                        {% if request.user.id|totalNotifications %}
+                        {{request.user.id|totalNotifications}}
+                        {% endif %}
+                    </span>
+                     {% url 'notifications' as notification_url %}
+                    {% if request.path == notification_url %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="27.826" height="32" viewBox="0 0 27.826 32">
+                          <g id="budicon-notification" transform="translate(-4 -1)">
+                            <path id="Path_35" data-name="Path 35" d="M13.739,30.217h8.348a4.522,4.522,0,0,1-8.348,0Zm17.476-4.785-1.356-1.356a2.783,2.783,0,0,1-.815-1.968V12.13a11.13,11.13,0,1,0-22.261,0v9.978a2.783,2.783,0,0,1-.815,1.969L4.611,25.432A2.087,2.087,0,0,0,4,26.908v1.918H31.826V26.908a2.087,2.087,0,0,0-.611-1.476Z" fill="#08f"/>
+                          </g>
+                        </svg>
+                    {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="27.826" height="32" viewBox="0 0 27.826 32">
+                          <g id="budicon-notification" transform="translate(-2 -1)">
+                            <path id="Path_35" data-name="Path 35" d="M29.215,25.432l-1.356-1.356a2.783,2.783,0,0,1-.815-1.968V12.13a11.13,11.13,0,1,0-22.261,0v9.978a2.783,2.783,0,0,1-.815,1.969L2.611,25.432A2.087,2.087,0,0,0,2,26.908v1.918h8.545a5.539,5.539,0,0,0,10.737,0h8.544V26.908a2.087,2.087,0,0,0-.611-1.476Zm-13.3,6.177A4.168,4.168,0,0,1,12,28.826H19.83A4.168,4.168,0,0,1,15.913,31.609Zm12.522-4.174H3.391v-.527a.692.692,0,0,1,.2-.492L4.952,25.06a4.148,4.148,0,0,0,1.222-2.952V12.13a9.739,9.739,0,0,1,19.478,0v9.978a4.148,4.148,0,0,0,1.223,2.952l1.356,1.356a.692.692,0,0,1,.2.492Z" fill="#666"/>
+                          </g>
+                        </svg> 
+                        {% endif %}
+                </a>
+            </div>
+            <div class="col">
+                <a class="" href="{% url 'messages' %}">
+                     <span style="font-size:10px;position:absolute;background:#0088ff;padding:0px 4px;border-radius:50%;color:white;margin-top:10px;margin-left:15px;">
+                        {% if request.user.id|totalChatNotifications %}
+                        {{request.user.id|totalChatNotifications}}
+                        {% endif %}
+                        </span>
+                        {% url 'messages' as message_url %}
+                        {% if request.path == message_url %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34.784" height="32" viewBox="0 0 34.784 32">
+                          <g id="budicon-happy-chat" transform="translate(0 -2)">
+                            <path id="Path_38" data-name="Path 38" d="M32.7,2H2.087A2.089,2.089,0,0,0,0,4.087V26.349a2.089,2.089,0,0,0,2.087,2.087H19.706a.707.707,0,0,1,.425.145l6.854,5.135a1.391,1.391,0,0,0,2.234-1.107V28.436H32.7a2.089,2.089,0,0,0,2.087-2.087V4.087A2.089,2.089,0,0,0,32.7,2ZM23.533,19.783a7.651,7.651,0,0,1-12.282,0A.7.7,0,0,1,12.4,19a6.263,6.263,0,0,0,9.981,0,.7.7,0,0,1,1.15.784Z" fill="#08f"/>
+                          </g>
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34.784" height="32" viewBox="0 0 34.784 32">
+                          <g id="budicon-happy-chat" transform="translate(0 -1.002)">
+                            <path id="Path_38" data-name="Path 38" d="M32.7,1H2.087A2.089,2.089,0,0,0,0,3.089V25.351a2.089,2.089,0,0,0,2.087,2.087H19.706a.707.707,0,0,1,.425.145l6.854,5.135a1.391,1.391,0,0,0,2.234-1.107V27.438H32.7a2.089,2.089,0,0,0,2.087-2.087V3.089A2.089,2.089,0,0,0,32.7,1Zm.7,24.349a.7.7,0,0,1-.7.7H28.8a.975.975,0,0,0-.974.974l0,4.587L20.97,26.472a2.1,2.1,0,0,0-1.264-.426H2.087a.7.7,0,0,1-.7-.7V3.089a.7.7,0,0,1,.7-.7H32.7a.7.7,0,0,1,.7.7ZM23.35,17.821a.7.7,0,0,1,.183.964,7.651,7.651,0,0,1-12.282,0A.7.7,0,0,1,12.4,18a6.263,6.263,0,0,0,9.981,0A.7.7,0,0,1,23.35,17.821Z" fill="#666"/>
+                          </g>
+                        </svg>
+                        {% endif %}
+                </a>
+            </div>
+            <div class="col">
+                <div class="nav-pic" data-toggle="collapse"
+                     data-target="#navbarNavAltMarkup"
+                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <img src="https://omokaa-assets.s3.us-east-2.amazonaws.com/static/logo/Final_Icon.png" alt="logo">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav colnav">
+            <div class="account-menu">
+            </div>
+                <table>
+                    <tr>
+                        <td class="account-profile">
+                            {% if request.user.profile_pic %}
+                            <img src="{{request.user.profile_pic.url}}">
+                            {% else %}
+                            <img src="{{defaultImage.profile_image.url}}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if request.user.is_authenticated %}
+                            <p style="text-align: left"><b>{{request.user.name}}</b><span style="color: #666666; font-size: 14px"> @{{request.user.username}}</span></p>
+                            {% else %}
+                            <p style="text-align: left"><b>Anonymous</b><span style="color: #666666; font-size: 14px"> @ Guest</span></p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table> 
+            {% if request.user.is_authenticated %}
+            {% if not request.user.bio %}
+            <div class="add-bio" id="biosmSection">
+                <form onsubmit="submitsmBio(event)" biourl="{% url 'add_bio' %}">
+                <div class="row">
+                    <div class="col">
+                            <textarea id="biosminput" rows="1" class="form-control textarea addBio" placeholder="Add Bio" required></textarea>
+                    </div>
+                    <div class="col-1 bi-pencil-col">
+                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil-fill" fill="#666666" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                        </svg>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right bio-btn" style="display: none;margin-bottom:15px;">Add Bio</button>
+                </form>
+            </div>
+            <div id="updatedBio">
+                <!-- Updated bio after form submission will be displayed here -->
+            </div>
+            {% else %}
+            <p style="margin: 5px 10px 0px; text-align: justify;">{{ request.user.bio }}</p>
+            {% endif %}
+            {% endif %}
+
+            <div id="whoareyoubtn" {% if not request.user.bio %}style="display:none;"{% endif %}>
+            <div class="row" style="{% if request.user.user_type and request.user.date_birth and request.user.profile_pic and request.user.identity %}display:none;{% endif %}" >
+                <a onclick="displayProfileDetailAdd()" style="width:100%;padding:20px;">
+                <div class="col profile-edit">
+                    {% if not request.user.user_type %}
+                    <span style="margin-right:30px;" id="formTitle">Who are you?</span>
+                    {% elif not request.user.date_birth %}
+                        {% if request.user.user_type == 1 %}
+                         <span style="margin-right:30px;" id="formTitle">Date of Birth.</span>
+                        {% else %}
+                        <span style="margin-right:30px;" id="formTitle">Date of Registeration.</span>
+                        {% endif %}
+                    {% elif not request.user.profile_pic %}
+                    <span style="margin-right:30px;" id="formTitle">Upload Profile Pic/logo</span>
+                    {% elif not request.user.identity %}
+                    <span style="margin-right:30px;" id="formTitle">Upload Identity Proof</span>
+                    {% endif %}
+                    
+                <span><svg style="border-bottom: 1px solid #666666;margin-top:0px;" width="1.0em" height="1.0em" viewBox="0 0 16 16" class="bi bi-pencil-fill" fill="#0088ff" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                    </svg></span>
+                </div>
+                </a>
+            </div>
+            <div id="profileDetailAdd" style="display:none;"> 
+            {% include 'snippets/mobile_account_link.html' %}
+            </div>
+            </div>
+
+
+            <div class="menu-sm" style="padding: 0 20px; margin-top: -20px;">
+                {% if request.user.is_authenticated %}
+                  <hr>
+                <div class="interests-sm">
+                    <h4>Interests</h4>
+            <div id="interestList">
+            {% if not nointerest %}
+            <div id="selectedSmInterest" interestUrl="{% url 'load_users_interest' %}">
+            </div>
+
+            <div class="content" id="selectSmInterest" style="display:none">
+                <div style="position: relative;">
+                    <h4 align="center">Select Interests</h4>
+                    <button id="closeBtn" type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            style="position:absolute;top:0px;right:0px;font-size:30px;"
+                            onclick="closeSelectInterest(event)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <hr>
+                <form id="interestSmForm" reloadurl="{% url 'post_reload_url' %}">
+                    <ul style="list-style:none;margin:2px 0px;" id="interestTag"
+                        categoryURL="{% url 'load_categories' %}"
+                        subCategoryURL="{% url 'load_sub_categories' %}">
+                        {% for types in interest_types %}
+                        <li style="margin-top: 2px; margin-left: -40px;">
+                            <input type="checkbox" name="types" value={{types.id}} typeid={{types.id}}
+                                   onchange="loadSmCategories(event)" {% if userInterest|isTypeChecked:types.id %} checked
+                                   {% endif %}>
+                            <label for={{types.name}} class="interestLabel"
+                                   style="font-size:16px;">{{types.name}}</label>
+                            <div id="{{types.id}}SmLoadCategories">
+                                {% if userInterest|isTypeChecked:types.id %}
+                                <ul style="list-style:none;margin:2px 0px;">
+                                    {% for category in types.category_set.all %}
+                                    <li style="font-size: 14px; margin: 2px auto;">
+                                        <input type="checkbox" name="categories" value={{category.id}}
+                                               categoryid={{category.id}} typeid={{types.id}}
+                                               onchange="loadSmSubCategories(event)"
+                                               {% if userInterest|one_more:category.id|isCategoryChecked:types.id %}
+                                               checked
+                                               {% endif %}>
+                                        <label style="font-size: 14px;" class="interestLabel" for={{category.name}}>{{category.name}}</label>
+                                        <div id="{{types.id}}{{category.id}}SmLoadSubCategories">
+                                            {% if userInterest|one_more:category.id|isCategoryChecked:types.id %}
+                                            <ul style="list-style:none;margin:2px 0px;">
+                                                {% for subcategory in category.subcategory_set.all %}
+                                                <li style="font-size: 12px; margin:2px auto;">
+                                                    <input type="checkbox" name="sub_categories"
+                                                           value={{subcategory.id}} subcategoryid={{subcategory.id}}
+                                                           {% if userInterest|one_more:subcategory.id|isSubCategoryChecked:types.id%}
+                                                           checked
+                                                           {% endif %}>
+                                                    <label class="interestLabel" style="font-size: 12px;"
+                                                           for={{subcategory.name}}>{{subcategory.name}}</label>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                        </div>
+
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <button type="submit" class="btn btn-success" onclick="interestSubmit(event)"
+                            style="width:100%;margin: 10px 0px;">Submit
+                    </button>
+                </form>
+            </div>
+                {% endif %}
+                </div>
+            </div>
+                <hr>
+                <div class="orders-sm">
+                    <h4>Orders</h4>
+                    <p><a href="">Pending Orders</a></p>
+                    <p><a href="">In-progress Orders</a></p>
+                    <p><a href="">Delivered Orders</a></p>
+                    <p><a href="">Completed Orders</a></p>
+                    <p><a href="">Cancelled Orders</a></p>
+                </div>
+                <hr>
+                <div class="groups-sm">
+                    <h4>Groups</h4>
+                    <p class="ptag-sm">Your Groups</p>
+                    <div style="margin-left:20px;">
+                        {% for user_group in user_group %}
+                            <p><a href="{% url 'single_group' user_group.id %}">{{user_group.name}}</a></p>
+                        {% endfor %}
+                        </div>
+                    <p><a href="{% url 'groups' %}">Explore Groups</a></p>
+                </div>
+                <hr>
+                {% endif %}
+                {%  if request.user.is_authenticated %}
+                <div class="account-sm">
+                    <h4>My account</h4>
+                    <p><a href="{% url 'user_posts' request.user.id %}">See Your Profile</a></p>
+                    <p><a href="">Edit Your Profile</a></p>
+                    <p><a href="{% url 'logout' %}">Logout</a></p>
+                </div>
+                {% endif %}
+                <hr>
+
+                    {% if not request.user.is_authenticated %}
+                    <p>
+                        Welcome to Omokaa. To enjoy more features of our system, you need to sign up/in
+                    </p>
+                    <a style="margin-left: 0" href="{% url 'registration_view' %}"><button class="btn btn-primary form-control mt-4">Sign in</button></a>
+                    <a style="margin-left: 0" href="{% url 'registration_view' %}"><button class="btn btn-secondary form-control mt-4 mb-4">Sign up</button></a>
+                    {% endif %}
+
+                <div class="account-sm">
+                    <h4>More</h4>
+                    <p><a href="{% url 'blog:articles_list' %}">Blog</a></p>
+                    <p><a href="{% url 'about' %}">About</a></p>
+                    <p><a href="{% url 'terms' %}">Terms of Service</a></p>
+                    <p><a href="{% url 'privacy_policy' %}">Privacy Policy</a></p>
+                    <p><a href="{% url 'user_feedback' %}">Feedback</a></p>
+                    <p><a href="{% url 'help' %}">Help</a></p>
+                </div>
+    </div>
+    </div>
+</nav>
+
+<!------- Web Menu ------->
+
+<nav class="navbar navbar-light bg-white d-none d-md-block">
+    <div class="container-fluid">
+        <div class="col-md-8 navbar-md">
+            <div class="row" style="padding-top: 10px">
+                <div class="col d-none d-md-block d-lg-none d-xl-none">
+                    <a class="brand-icon" href="{% url 'home' %}">
+                        <img src="https://omokaa-assets.s3.us-east-2.amazonaws.com/static/logo/Final_Icon.png"
+                            alt="Omokaa logo" style="height:45px;width:auto;">
+                    </a>
+                </div>
+                <div class="col-lg-3 d-none d-lg-block">
+                    <a class="brand-icon" href="{% url 'home' %}"><img
+                            src="https://omokaa-assets.s3.us-east-2.amazonaws.com/static/logo/Final_Logo.png"
+                            alt="Omokaa logo" style="height:45px;width:auto;"></a>
+                </div>
+                <div class="col col-nav">
+                    <a class="active" href="{% url 'home' %}">
+                        {% url 'home' as home_url %}
+                        {% if request.path == home_url %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36.364" height="32" viewBox="0 0 36.364 32" style="border-bottom:2px solid #0088ff;">
+                          <g id="budicon-home" transform="translate(0 -1)">
+                            <path id="Path_34" data-name="Path 34" d="M36.128,17.191l-17.455-16a.729.729,0,0,0-.983,0l-17.455,16a.727.727,0,0,0,.983,1.072L4.364,15.38V30.818A2.182,2.182,0,0,0,6.545,33H29.818A2.182,2.182,0,0,0,32,30.818V15.38l3.145,2.883a.727.727,0,0,0,.983-1.072Z" transform="translate(0 0)" fill="#08f"/>
+                          </g>
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36.364" height="32" viewBox="0 0 36.364 32">
+                          <g id="budicon-home" transform="translate(0 -1)">
+                            <path id="Path_34" data-name="Path 34" d="M36.128,17.191l-17.455-16a.729.729,0,0,0-.983,0l-17.455,16a.727.727,0,0,0,.983,1.072L4.364,15.38V30.818A2.182,2.182,0,0,0,6.545,33H29.818A2.182,2.182,0,0,0,32,30.818V15.38l3.145,2.883a.727.727,0,0,0,.983-1.072Z" transform="translate(0 0)" fill="#fff" stroke="#666"/>
+                          </g>
+                        </svg>
+                        {% endif %}
+                    </a>
+                </div>
+                
+                <div class="col">
+                    <a class="" href="{% url 'notifications' %}" style="position:relative;">
+                        <span style="font-size:14px;position:absolute;background:#2ab8fb;padding:0px 5px;border-radius:50%;color:white;">
+                        {% if request.user.id|totalNotifications %}
+                        {{request.user.id|totalNotifications}}
+                        {% endif %}
+                    </span>
+                    {% url 'notifications' as notification_url %}
+                    {% if request.path == notification_url %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="27.826" height="32" viewBox="0 0 27.826 32" style="border-bottom:2px solid #0088ff;">
+                          <g id="budicon-notification" transform="translate(-4 -1)">
+                            <path id="Path_35" data-name="Path 35" d="M13.739,30.217h8.348a4.522,4.522,0,0,1-8.348,0Zm17.476-4.785-1.356-1.356a2.783,2.783,0,0,1-.815-1.968V12.13a11.13,11.13,0,1,0-22.261,0v9.978a2.783,2.783,0,0,1-.815,1.969L4.611,25.432A2.087,2.087,0,0,0,4,26.908v1.918H31.826V26.908a2.087,2.087,0,0,0-.611-1.476Z" fill="#08f"/>
+                          </g>
+                        </svg>
+                    {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="27.826" height="32" viewBox="0 0 27.826 32">
+                          <g id="budicon-notification" transform="translate(-2 -1)">
+                            <path id="Path_35" data-name="Path 35" d="M29.215,25.432l-1.356-1.356a2.783,2.783,0,0,1-.815-1.968V12.13a11.13,11.13,0,1,0-22.261,0v9.978a2.783,2.783,0,0,1-.815,1.969L2.611,25.432A2.087,2.087,0,0,0,2,26.908v1.918h8.545a5.539,5.539,0,0,0,10.737,0h8.544V26.908a2.087,2.087,0,0,0-.611-1.476Zm-13.3,6.177A4.168,4.168,0,0,1,12,28.826H19.83A4.168,4.168,0,0,1,15.913,31.609Zm12.522-4.174H3.391v-.527a.692.692,0,0,1,.2-.492L4.952,25.06a4.148,4.148,0,0,0,1.222-2.952V12.13a9.739,9.739,0,0,1,19.478,0v9.978a4.148,4.148,0,0,0,1.223,2.952l1.356,1.356a.692.692,0,0,1,.2.492Z" fill="#666"/>
+                          </g>
+                        </svg> 
+                        {% endif %}
+                    </a>
+                </div>
+             
+                <div class="col">
+                    <a href="{% url 'groups' %}" {% if not request.user.is_authenticated%}onclick="openUnAuthModule(event)"{% endif %}>
+                        {% url 'groups' as group_url  %}
+                        {% if request.path == group_url %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30.72" height="32" viewBox="0 0 30.72 32" style="border-bottom:2px solid #0088ff;">
+                          <g id="budicon-group" transform="translate(-1 0)">
+                            <path id="Path_36" data-name="Path 36" d="M12.52,5.12a3.84,3.84,0,1,1,3.84,3.84,3.84,3.84,0,0,1-3.84-3.84Zm12.8,2.56a3.84,3.84,0,1,0-3.84-3.84A3.84,3.84,0,0,0,25.32,7.68ZM7.4,7.68A3.84,3.84,0,1,0,3.56,3.84,3.84,3.84,0,0,0,7.4,7.68ZM8.68,21.12V16.64A7.664,7.664,0,0,1,11.637,10.6,6.373,6.373,0,0,0,1,15.36v3.2a1.92,1.92,0,0,0,1.92,1.92h.64v5.76a1.92,1.92,0,0,0,1.92,1.92H9.32a1.92,1.92,0,0,0,1.92-1.92V24.256A3.207,3.207,0,0,1,8.68,21.12ZM25.32,8.96A6.349,6.349,0,0,0,21.083,10.6,7.664,7.664,0,0,1,24.04,16.64v4.48a3.207,3.207,0,0,1-2.56,3.136V26.24a1.92,1.92,0,0,0,1.92,1.92h3.84a1.92,1.92,0,0,0,1.92-1.92V20.48h.64a1.92,1.92,0,0,0,1.92-1.92v-3.2A6.4,6.4,0,0,0,25.32,8.96ZM22.76,21.12V16.64a6.4,6.4,0,1,0-12.8,0v4.48a1.92,1.92,0,0,0,1.92,1.92h.64v7.04A1.92,1.92,0,0,0,14.44,32h3.84a1.92,1.92,0,0,0,1.92-1.92V23.04h.64A1.92,1.92,0,0,0,22.76,21.12Z" transform="translate(0 0)" fill="#08f"/>
+                          </g>
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30.72" height="32" viewBox="0 0 30.72 32">
+                          <g id="budicon-group" transform="translate(0 0)">
+                            <path id="Path_36" data-name="Path 36" d="M15.36,8.96a3.84,3.84,0,1,0-3.84-3.84,3.84,3.84,0,0,0,3.84,3.84Zm0-6.4A2.56,2.56,0,1,1,12.8,5.12a2.56,2.56,0,0,1,2.56-2.56Zm8.96,5.12a3.84,3.84,0,1,0-3.84-3.84A3.84,3.84,0,0,0,24.32,7.68Zm0-6.4a2.56,2.56,0,1,1-2.56,2.56A2.56,2.56,0,0,1,24.32,1.28ZM6.4,7.68A3.84,3.84,0,1,0,2.56,3.84,3.84,3.84,0,0,0,6.4,7.68Zm0-6.4A2.56,2.56,0,1,1,3.84,3.84,2.56,2.56,0,0,1,6.4,1.28ZM24.32,8.96A6.371,6.371,0,0,0,19.2,11.551h0a6.287,6.287,0,0,0-7.69,0l0,0A6.382,6.382,0,0,0,0,15.36v3.2a1.92,1.92,0,0,0,1.92,1.92h.64v5.76a1.92,1.92,0,0,0,1.92,1.92H8.32a1.92,1.92,0,0,0,1.92-1.92V22.922a1.9,1.9,0,0,0,.64.118h.64v7.04A1.92,1.92,0,0,0,13.44,32h3.84a1.92,1.92,0,0,0,1.92-1.92V23.04h.64a1.9,1.9,0,0,0,.64-.118V26.24a1.92,1.92,0,0,0,1.92,1.92h3.84a1.92,1.92,0,0,0,1.92-1.92V20.48h.64a1.92,1.92,0,0,0,1.92-1.92v-3.2a6.4,6.4,0,0,0-6.4-6.4ZM8.96,16.64v9.6a.641.641,0,0,1-.64.64H4.48a.641.641,0,0,1-.64-.64V20.48A1.28,1.28,0,0,0,2.56,19.2H1.92a.641.641,0,0,1-.64-.64v-3.2a5.112,5.112,0,0,1,9.3-2.938A6.349,6.349,0,0,0,8.96,16.64Zm11.52,4.48a.641.641,0,0,1-.64.64H19.2a1.28,1.28,0,0,0-1.28,1.28v7.04a.641.641,0,0,1-.64.64H13.44a.641.641,0,0,1-.64-.64V23.04a1.28,1.28,0,0,0-1.28-1.28h-.64a.641.641,0,0,1-.64-.64V16.64a5.12,5.12,0,1,1,10.24,0Zm8.96-2.56a.641.641,0,0,1-.64.64h-.64a1.28,1.28,0,0,0-1.28,1.28v5.76a.641.641,0,0,1-.64.64H22.4a.641.641,0,0,1-.64-.64v-9.6a6.349,6.349,0,0,0-1.621-4.218,5.112,5.112,0,0,1,9.3,2.938Z" transform="translate(0 0)" fill="#666"/>
+                          </g>
+                        </svg>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="" href="{% url 'orders' %}" {% if not request.user.is_authenticated%}onclick="openUnAuthModule(event)"{% endif %}>
+                        {% url 'orders' as order_url %}
+                        {% if request.path == order_url %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="33.33" height="32" viewBox="0 0 33.33 32" style="border-bottom:2px solid #0088ff;">
+                          <g id="budicon-market" transform="translate(-0.001)">
+                            <path id="Path_37" data-name="Path 37" d="M28.68,16.471a6.05,6.05,0,0,1-4.029-1.551,5.907,5.907,0,0,1-4.008,1.551,5.986,5.986,0,0,1-3.993-1.549,5.912,5.912,0,0,1-4.007,1.549,5.985,5.985,0,0,1-4-1.556,6.053,6.053,0,0,1-4.035,1.556c-.673,0-1.94-.12-1.94-.329V30a2,2,0,0,0,2,2h2V21.333A1.333,1.333,0,0,1,8,20h6.667A1.333,1.333,0,0,1,16,21.333V32H28.666a2,2,0,0,0,2-2V16.139C30.666,16.353,29.373,16.471,28.68,16.471ZM24.666,29.333h-4a.667.667,0,1,1,0-1.333h4a.667.667,0,0,1,0,1.333ZM25.333,24A1.333,1.333,0,0,1,24,25.333H21.333A1.333,1.333,0,0,1,20,24V21.333A1.333,1.333,0,0,1,21.333,20H24a1.333,1.333,0,0,1,1.333,1.333ZM28.847,2.667H5.736L6.321.912A1.333,1.333,0,0,1,7.586,0H27a1.333,1.333,0,0,1,1.265.912Zm4.406,8.9a4.7,4.7,0,0,1-8.61,1.271,4.627,4.627,0,0,1-8,0,4.627,4.627,0,0,1-8,0A4.707,4.707,0,0,1,.2,12.1,3.262,3.262,0,0,1,.453,9.333L4.58,4H29.841L33.05,9.559a3.173,3.173,0,0,1,.2,2.005Z" fill="#08f"/>
+                          </g>
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36.36" height="32" viewBox="0 0 36.36 32">
+                          <g id="budicon-market" transform="translate(-0.001 -2)">
+                            <path id="Path_38" data-name="Path 38" d="M27.636,30.364a.727.727,0,0,1-.727.727H22.545a.727.727,0,1,1,0-1.455h4.364A.727.727,0,0,1,27.636,30.364Zm1.455-9.455v5.818a1.455,1.455,0,0,1-1.455,1.455H21.818a1.455,1.455,0,0,1-1.455-1.455V20.909a1.455,1.455,0,0,1,1.455-1.455h5.818A1.455,1.455,0,0,1,29.09,20.909Zm-1.455,0H21.818v5.818h5.818Zm8.64-9.2a5.063,5.063,0,0,1-2.822,3.4V31.818A2.182,2.182,0,0,1,31.272,34H5.09a2.182,2.182,0,0,1-2.182-2.182V15.135a5.111,5.111,0,0,1-2.7-2.846A3.559,3.559,0,0,1,.494,9.273l5.231-6.76A1.018,1.018,0,0,1,6.609,2H31.134a1.018,1.018,0,0,1,.936.617l3.984,6.9a3.462,3.462,0,0,1,.222,2.187ZM16,20.909H8.727V32.545H16Zm16-5.365a5.007,5.007,0,0,1-5.116-2.451,5.047,5.047,0,0,1-8.727,0,5.047,5.047,0,0,1-8.727,0,5.141,5.141,0,0,1-4.4,2.511,5.01,5.01,0,0,1-.662-.052V31.818a.727.727,0,0,0,.727.727H7.272V20.909a1.455,1.455,0,0,1,1.455-1.455H16a1.455,1.455,0,0,1,1.455,1.455V32.545H31.272A.727.727,0,0,0,32,31.818Zm2.718-5.451L30.845,3.455H6.862L1.757,10a2.143,2.143,0,0,0-.18,1.787A3.684,3.684,0,0,0,8.7,10.513a.727.727,0,1,1,1.455,0,3.636,3.636,0,1,0,7.273,0,.727.727,0,1,1,1.455,0,3.636,3.636,0,1,0,7.273,0,.727.727,0,1,1,1.455,0,3.681,3.681,0,0,0,7.25.853A2.053,2.053,0,0,0,34.717,10.093Z" transform="translate(0)" fill="#666"/>
+                          </g>
+                        </svg>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="" href="{% url 'messages' %}">
+                        <span style="font-size:14px;position:absolute;background:#2ab8fb;padding:0px 5px;border-radius:50%;color:white;margin-left:15px;">
+                        {% if request.user.id|totalChatNotifications %}
+                        {{request.user.id|totalChatNotifications}}
+                        {% endif %}
+                        </span>
+                        {% url 'messages' as message_url %}
+                        {% if request.path == message_url %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34.784" height="32" viewBox="0 0 34.784 32" style="border-bottom:2px solid #0088ff;">
+                          <g id="budicon-happy-chat" transform="translate(0 -2)">
+                            <path id="Path_38" data-name="Path 38" d="M32.7,2H2.087A2.089,2.089,0,0,0,0,4.087V26.349a2.089,2.089,0,0,0,2.087,2.087H19.706a.707.707,0,0,1,.425.145l6.854,5.135a1.391,1.391,0,0,0,2.234-1.107V28.436H32.7a2.089,2.089,0,0,0,2.087-2.087V4.087A2.089,2.089,0,0,0,32.7,2ZM23.533,19.783a7.651,7.651,0,0,1-12.282,0A.7.7,0,0,1,12.4,19a6.263,6.263,0,0,0,9.981,0,.7.7,0,0,1,1.15.784Z" fill="#08f"/>
+                          </g>
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34.784" height="32" viewBox="0 0 34.784 32">
+                          <g id="budicon-happy-chat" transform="translate(0 -1.002)">
+                            <path id="Path_38" data-name="Path 38" d="M32.7,1H2.087A2.089,2.089,0,0,0,0,3.089V25.351a2.089,2.089,0,0,0,2.087,2.087H19.706a.707.707,0,0,1,.425.145l6.854,5.135a1.391,1.391,0,0,0,2.234-1.107V27.438H32.7a2.089,2.089,0,0,0,2.087-2.087V3.089A2.089,2.089,0,0,0,32.7,1Zm.7,24.349a.7.7,0,0,1-.7.7H28.8a.975.975,0,0,0-.974.974l0,4.587L20.97,26.472a2.1,2.1,0,0,0-1.264-.426H2.087a.7.7,0,0,1-.7-.7V3.089a.7.7,0,0,1,.7-.7H32.7a.7.7,0,0,1,.7.7ZM23.35,17.821a.7.7,0,0,1,.183.964,7.651,7.651,0,0,1-12.282,0A.7.7,0,0,1,12.4,18a6.263,6.263,0,0,0,9.981,0A.7.7,0,0,1,23.35,17.821Z" fill="#666"/>
+                          </g>
+                        </svg>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 d-none d-lg-block">
+            <div class="row">
+                <div class="col">
+                    <form class="" action="/results" method="GET">
+                        <div class="input-group navbar-right">
+                            <input type="search" class="form-control" placeholder="Search here"
+                                   aria-label="Recipient's username"
+                                   aria-describedby="basic-addon2" name="q" id="id_q" value="{{query}}">
+                            <div class="input-group-append">
+                            <button type="submit" class="input-group-text" id="basic-addon2"><i
+                                        class="fa fa-fw fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-auto">
+                <div class="dropdown-toggle dropleft" data-toggle="dropdown" aria-haspopup="true"
+                     aria-expanded="false">
+                <div class="droper">▼</div>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="text-align: right">
+                    {% if request.user.is_authenticated %}
+                        <a class="dropdown-item" href="{% url 'user_posts' request.user.id %}" onclick="dropdownEvent(event)">See Your Profile</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}" onclick="dropdownEvent(event)">Logout</a>
+                    {% else %}
+                        <a class="dropdown-item" href="{% url 'registration_view' %}" onclick="dropdownEvent(event)">Sign in</a>
+                        <a class="dropdown-item" href="{% url 'registration_view' %}" onclick="dropdownEvent(event)">Sign up</a>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% block content %}
+
+{% endblock %}
+
+
+<!-- Optional JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
+
+<script type="text/javascript"
+        src="https://www.jqueryscript.net/form/jQuery-Floating-Placeholder-Text-Plugin-Placeholder-Label.html"></script>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAYDHmv63nnsDeBUr5upucoENpwHakO8Rs"></script>
+<script type="text/javascript" src="{% static 'accounts/js/jquery.waypoints.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'accounts/js/infinite.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'accounts/js/script.js' %}"></script>
+<script type="text/javascript" src="{% static 'accounts/js/mobile_script.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        if ($(window).width() <= 975) {
+                loadSmUserInterest()
+        }
+
+        // loadMessage()
+        function loadMessage() {
+            var url = $('#chatlist').attr('smallmessageurl')
+            $.ajax({
+                url: url,
+                data: {
+                    chatid: 2
+                },
+                success: function (data) {
+                    document.getElementById('firstChat').innerHTML = data
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            })
+
+        }
+
+
+
+    })
+
+    $(document).ready(function () {
+        $(".textarea").on("keyup input", function () {
+            $(this).css('height', 'auto').css('height', this.scrollHeight + (this.offsetHeight - this.clientHeight));
+        });
+
+        //add bio
+        $(".addBio").focus(function(){
+          $(".bi-pencil-col").fadeOut(200);
+          $(".bio-btn").fadeIn(1000);
+        });
+        $(".addBio").focusout(function(){
+            if($('.addBio').length > 0 && $('.addBio').val() != ''){
+                $(".bi-pencil-col").css("display", "none");
+                $(".bio-btn").css("display", "block");
+            } else {
+                $(".bi-pencil-col").fadeIn(1000);
+                $(".bio-btn").fadeOut(500);
+            }
+        });
+    });
+
+
+    function openUnAuthModule(event){
+        event.preventDefault()
+        document.getElementById('unAuthBtn').click()
+    }
+
+    function submitsmBio(event) {
+        event.preventDefault()
+        var bio = document.getElementById('biosminput').value
+        var url = event.target.attributes.biourl.value
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                'bio': bio,
+                'csrfmiddlewaretoken': '{{csrf_token}}'
+            },
+            success: function (data) {
+                var ptag = document.createElement("P")
+                ptag.style.margin = '5px 10px 15px';
+                ptag.style.textAlign = 'start';
+                ptag.innerText = bio
+                document.getElementById('biosmSection').style.display = 'none'
+                document.getElementById('updatedBio').appendChild(ptag)
+                document.getElementById('whoareyoubtn').style.display = 'initial'
+            }
+        })
+    }
+
+    function displayProfileDetailAdd(){
+        document.getElementById('profileDetailAdd').style.display = 'initial'
+    }
+
+    function dropdownEvent(event) {
+        var url = event.target.attributes.href.value
+        window.location = window.location.origin + url
+    }
+
+    function loadSmUserInterest() {
+        var url = $('#selectedSmInterest').attr('interestUrl')
+        $.ajax({
+            url: url,
+            success: function (data) {
+                try{
+                document.getElementById('selectedSmInterest').innerHTML = data
+                }
+                catch(err){
+                    console.log(err)
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+    }
+
+     function reloadPost() {
+        console.log($(window).width())
+        if ($(window).width() <= 975) {
+            var form = document.getElementById('interestSmForm')
+        }
+        else{
+            var form = document.getElementById('interestForm')
+        }
+        var kvpairs = []
+        var url = form.attributes.reloadurl.value
+        var typeList = {"types": [], "categories": []}
+        var categoryList = {"category": [], "sub_categories": []}
+        for (var i = 0; i < form.elements.length; i++) {
+            var e = form.elements[i];
+            if (e.checked) {
+                if (e.name == 'types') {
+                    if (typeList['types'].length !== 0) {
+                        if (categoryList['category'].length != 0) {
+                            typeList['categories'].push(categoryList)
+                        }
+                        kvpairs.push(typeList)
+                        typeList = {"types": [], "categories": []}
+                        categoryList = {"category": [], "sub_categories": []}
+                    }
+                }
+                if (e.name == 'types') {
+                    typeList[encodeURIComponent(e.name)].push(encodeURIComponent(e.value));
+                } else if (e.name == 'categories') {
+                    if (categoryList['category'].length != 0) {
+                        typeList['categories'].push(categoryList)
+                        categoryList = {"category": [], "sub_categories": []}
+                    }
+                    categoryList['category'].push(encodeURIComponent(e.value))
+                } else if (e.name == 'sub_categories') {
+                    categoryList['sub_categories'].push(encodeURIComponent(e.value))
+                }
+            }
+            if ((i == form.elements.length - 1) && typeList["types"] !== []) {
+                if (categoryList['category'].length != 0) {
+                    typeList['categories'].push(categoryList)
+                }
+                kvpairs.push(typeList)
+            }
+        }
+        if (kvpairs.length == 1 && kvpairs[0]['types'].length == 0) {
+            kvpairs = []
+        }
+        kvpairs = JSON.stringify(kvpairs)
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                interestList: kvpairs,
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                if (data['location_redirect']) {
+                    window.location.reload()
+                } else {
+                    try{
+                    document.getElementById('postDisplay').innerHTML = data
+                    var infinite = new Waypoint.Infinite({
+                    element: $('.infinite-container')[0],
+                    onBeforePageLoad: function () {
+                    $('.loading').show();
+                },
+                onAfterPageLoad: function ($items) {
+                    $('.loading').hide();
+                }
+                });
+                    }catch(err){
+                        console.log(err)
+                    }
+                    if ($(window).width() <= 975) {
+                        document.getElementById('selectSmInterest').style.display = 'none'
+                        loadSmUserInterest()
+                    }
+                    else{
+                        document.getElementById('selectInterest').style.display = 'none'
+                        loadUserInterest()
+                    }
+                }
+            }
+        })
+    }
+
+
+    function openSelectInterest(event) {
+        event.preventDefault()
+        if ($(window).width() <= 975) {
+            document.getElementById('selectSmInterest').style.display = 'inherit'
+        }
+        else{
+            document.getElementById('selectInterest').style.display = 'inherit'   
+            document.getElementById('interestBtn').style.display = 'none'
+        }    
+    }
+
+    function closeSelectInterest(event) {
+        event.preventDefault()
+        if ($(window).width() <= 975) {
+            document.getElementById('selectSmInterest').style.display = 'none'
+        }
+        else{
+            document.getElementById('selectInterest').style.display = 'none' 
+            document.getElementById('interestBtn').style.display = 'inherit'  
+        } 
+    }
+
+    function loadSmCategories(event) {
+        var typeid = event.target.attributes.typeid.value
+        var tagId = typeid + "SmLoadCategories"
+        if (event.target.checked) {
+            var url = $("#interestTag").attr('categoryURL')
+            $.ajax({
+                url: url,
+                data: {
+                    typeid: typeid
+                },
+                success: function (data) {
+                    document.getElementById(tagId).innerHTML = data
+                }
+            })
+        } else {
+            document.getElementById(tagId).innerHTML = ''
+        }
+    }
+
+    function loadSmSubCategories(event) {
+        var categoryid = event.target.attributes.categoryid.value
+        var typeid = event.target.attributes.typeid.value
+        var tagId = typeid + categoryid + "SmLoadSubCategories"
+        if (event.target.checked) {
+            var url = $("#interestTag").attr('subCategoryURL')
+            $.ajax({
+                url: url,
+                data: {
+                    categoryid: categoryid
+                },
+                success: function (data) {
+                    document.getElementById(tagId).innerHTML = data
+                }
+            })
+        } else {
+            document.getElementById(tagId).innerHTML = ''
+        }
+    }
+
+
+</script>
+{% block domready %}
+
+{% endblock %}
+</body>
+</html>

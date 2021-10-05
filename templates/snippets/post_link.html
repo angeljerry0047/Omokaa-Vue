@@ -1,0 +1,392 @@
+{% load static %}
+{% load customtags %}
+<style>
+
+    p { word-break: normal }
+
+    .post {
+        border-radius: 5px;
+        margin: 5px 16px;
+        background-color: white;
+        padding: 10px 0 0;
+        width: 95.5%;
+    }
+
+    .noPointer{
+        pointer-events: none;
+    }
+
+    .post a {
+        color: #444444;
+    }
+
+    .post b {
+        color: black;
+    }
+
+    .thumbnail {
+        width: 100%;
+        max-height: 300px;
+    }
+
+    .promoted {
+        border-radius: 10px;
+        font-size: 12px;
+        background-color: #f0f2f5;
+        padding: 2px 10px;
+        border: none;
+        color: #6EBBFF;
+    }
+
+    .location {
+        color: #6EBBFF;
+        margin-left: 0;
+    }
+
+    .post-detail {
+        color: #666666;
+        font-size: 14px;
+        font-family: sans-serif !important;
+    }
+
+    .post-detail a{
+        color:#0088FF;
+    }
+
+    @media (min-width: 556px){
+        .chat{
+            text-align: right;
+        }
+    }
+
+
+    .dropleft .dropdown-toggle::before{
+        display: none;
+    }
+
+</style>
+<div id="urlTag" likedislikeurl="{% url 'ajax_like_dislike' %}"></div>
+
+
+
+<button type="button" id="unAuthBtn" class="btn btn-primary" data-toggle="modal" data-target="#unAuthModal"
+        style="display:none">
+</button>
+<div class="modal fade" id="unAuthModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thank you for visiting our site</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>To continue, you need to;</p>
+                <a href="{% url 'registration_view' %}" class="btn btn-primary pull-left">Sign in</a><a href="{% url 'registration_view' %}" class="btn btn-primary pull-right">Sign up</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<button type="button" id="deleteBtn" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal"
+        style="display:none">
+</button>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Deleting Post</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Ary you sure want to delete this post?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">cancel</button>
+                <button id="confirmDeleteBtn" type="button" class="btn btn-danger" data-dismiss="modal"
+                        onclick="deletePost(event)" deleteurl="{% url 'delete_post' %}">Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button type="button" id="reportBtn" class="btn btn-primary" data-toggle="modal" data-target="#reportModal"
+        style="display:none">
+</button>
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Report Post</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Select if the post is fraud or spam?
+            </div>
+            <div class="modal-footer">
+                <button id="confirmFraudBtn" type="button" class="btn btn-danger" data-dismiss="modal"
+                        onclick="fraudPost(event)" reporturl="{% url 'report_post' %}">Fraud
+                </button>
+                <button id="confirmSpamBtn" type="button" class="btn btn-warning" data-dismiss="modal"
+                        onclick="spamPost(event)" reporturl="{% url 'report_post' %}">Spam
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="infinite-container" style="width: 100%;margin-bottom: 200px;">
+{% if posts %}
+{% for post in posts %}
+{% if post.thumbnail %}
+<div class="modal fade infinite-item" id="postModal{{post.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+
+                        <div class="carousel-item active">
+                            <img src="{{post.thumbnail.url}}" class="d-block w-100" alt="...">
+                        </div>
+
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+
+
+{% for post in posts %}
+<div class="post infinite-item">
+    <div class="col-12 post-detail">
+        <div class="row">
+            <div class="profile_img col-auto">
+                <a href="{% url 'user_posts' post.author.id %}" {% if not request.user.is_authenticated %} onclick="openUnAuthModule(event)" {% endif %}>
+                    {% if post.author.profile_pic %}
+                    <img src="{{post.author.profile_pic.url}}">
+                    {% else %}
+                    <img src="{{defaultImage.profile_image.url}}">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <a href="{%  url 'user_posts' post.author.id %}" {% if not request.user.is_authenticated %} onclick="openUnAuthModule(event)" {% endif %}>
+                <b>{{post.author.name}}</b>
+                            @{{post.author.username}}</a>
+                            {% if post.author.is_verified %}
+                            <svg style="color: #0088FF;" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                              </svg>
+                              {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><span style="color: #aaa; font-size: 14px">{{post.date_published}}</span>
+                            {% if post.is_promotional %}
+                            <button class="pull-right promoted">
+                                <svg style="margin: -4px 5px auto 0" width="1em" height="1em" viewBox="0 0 16 16"
+                                     class="bi bi-star-fill" fill="#0088ff" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                </svg>
+                                Promoted
+                            </button>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 dropleft" align="right" style="position:relative;">
+                <div class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                     aria-expanded="false">
+                    <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical"
+                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    </svg>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#" {% if request.user.is_authenticated %} onclick="copyUrl(event)" {% else %} onclick="openUnAuthModule(event)" {% endif %}
+                           postURL="{% url 'post_detail' post.id post.date_published.year post.date_published.month post.date_published.day post.slug   %}">copy url</a>
+                        {% if request.user == post.author %}
+                        <a class="dropdown-item" href="#" onclick="openDeletePopUp(event)" postid={{post.id}}>Delete
+                            Post
+                        {% endif %}
+
+                        {% if request.user != post.author %}
+                        <a class="dropdown-item" href="#" {% if request.user.is_authenticated %} onclick="openReportPopUp(event)"{% else %} onclick="openUnAuthModule(event)" {% endif %}  postid={{post.id}}>Report Post</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p><span class="location" style="color: #6ebbff; margin-left: 0; font-size: 12px;"><i
+                style="color: #0088ff; font-size: 14px;" class="fa fa-fw fa-map-marker"></i> {{post.location}}</span>
+        </p>
+        <div class="row" style="margin-top: -30px">
+            <div class="col">
+                <p class="post-details">{{post.detail|urlizetrunc:30|linebreaks}}</p>
+                {% if post.thumbnail %}
+                <div class="thumbnail" style="overflow:hidden;">
+                    <img src="{{post.thumbnail.url}}" data-toggle="modal" data-target="#postModal{{post.id}}"
+                         style="width:100%;" alt="">
+
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+        {% for image in postImage %}
+        <img src="{{image.image.url}}" style="width:20%;" alt="">
+        {% endfor %}
+        <hr class="mt-0 mb-1">
+        <div class="row mb-2" align="center">
+            <div class="col-xs-6 col-auto">
+                {% if request.user.is_authenticated %}
+                <a href="#" {% if request.user.id|hasReviewed:post.id %} onclick="openUpdateFeedback(event)" {% else %} onclick="openfeedback(event)" {% endif %} postid={{post.id}} style="margin-top: -5px;text-decoration:none;" feedbackfetchurl="{% url 'feedback_fetch' %}">
+                    {% else %}
+                    <a href="#" onclick="openUnAuthModule(event)" style="margin-top: -5px;text-decoration:none;">
+                    {% endif %}
+                    <svg style="margin: -5px 0 auto" width="1em" height="1em" viewBox="0 0 16 16"
+                         class="bi bi-star-fill noPointer" fill="#666666" xmlns="http://www.w3.org/2000/svg">
+                        <path class="noPointer" d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                    </svg>
+                
+                <span class="noPointer" style="margin: 14px 5px 0;"
+                      id="{{post.id}}rating">{{post.id|averageRating}}<span
+                        style="margin: -10px 0 auto 10px; font-size: 16px; font-weight: bold">|</span></span>
+                <span class="noPointer" id="{{post.id}}rating_count"
+                      style="color: black;">{{post.postrating_set.all|totalQuery}} Reviews</span>
+                      </a>
+            </div>
+            <div class="col chat">
+                {% if request.user == post.author %}
+                <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-chat-left-dots-fill"
+                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                </svg>
+                <span style="color: black"> Chat</span>
+                {% else %}
+                <a href="{% url 'messages_fetch' post.id %}" {% if not request.user.is_authenticated%}onclick="openUnAuthModule(event)"{% endif %}>
+                    <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-chat-left-dots-fill"
+                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    </svg>
+                    <span style="color: black"> Chat</span>
+                </a>
+                {% endif %}
+            </div>
+            <div class="col">
+                {% if post.type.name == 'Work' or post.type.name == 'work' %}
+                    <button href="{% url 'hire_proposals' post.id %}" 
+                            postid={{post.id}} 
+                            {% if not request.user.is_authenticated%}onclick="openUnAuthModule(event)"{% else %}{% if post.author == request.user %}onclick="openDetailPage(event)"{% else %}onclick="openOfferUpdate(event,'hire')"{% endif %}{% endif %}
+                            class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white" >Hire
+                    </button>
+                {% elif post.type.name == 'Buy' or post.type.name == 'buy' %}
+                    <button href="{% url 'sell_proposals' post.id %}" 
+                            postid={{post.id}} 
+                            {% if not request.user.is_authenticated%}onclick="openUnAuthModule(event)"{% else %}{% if post.author == request.user %}onclick="openDetailPage(event)"{% else %}onclick="openOfferUpdate(event,'sell')"{% endif %}{% endif %}
+                            class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white">Sell
+                    </button>
+                {% elif post.type.name == 'Hire' or post.type.name == 'hire' %}
+           
+                    <button href="{% url 'work_proposals' post.id %}" 
+                            postid={{post.id}} 
+                            {% if not request.user.is_authenticated%}onclick="openUnAuthModule(event)"{% else %}{% if post.author == request.user %}onclick="openDetailPage(event)"{% else %}onclick="openOfferUpdate(event,'work')"{% endif %}{% endif %}
+                            class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white">Work
+                    </button>
+           
+                {% elif post.type.name == 'Sell' or post.type.name == 'sell' %}
+                    <button href="{% url 'buy_proposals' post.id %}" 
+                            postid={{post.id}} 
+                            {% if not request.user.is_authenticated%}onclick="openUnAuthModule(event)"{% else %}{% if post.author == request.user %}onclick="openDetailPage(event)"{% else %}onclick="openOfferUpdate(event,'buy')"{% endif %}{% endif %}
+                            class="btn btn-sm pull-right"
+                            style="padding: 0 18px; background-color: #0088ff; color: white">Buy
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row" style="display:none;" id="{{post.id}}feedbackdiv">
+            <form style="width:100%;" onsubmit="feedbackSubmit(event)" id="{{post.id}}feedbackform"
+                  postid={{post.id}} feedbackurl={% url 'feedback' %} feedbackUpdate="{% url 'feedback_total' %}">
+            <div class="rating">
+                <input type="radio" name="rating" value="5" id="post{{post.id}}5" >
+                <label for="post{{post.id}}5">☆</label>
+                <input type="radio" name="rating" value="4" id="post{{post.id}}4">
+                <label for="post{{post.id}}4">☆</label>
+                <input type="radio" name="rating" value="3" id="post{{post.id}}3">
+                <label for="post{{post.id}}3">☆</label>
+                <input type="radio" name="rating" value="2" id="post{{post.id}}2">
+                <label for="post{{post.id}}2">☆</label>
+                <input type="radio" name="rating" value="1" id="post{{post.id}}1">
+                <label for="post{{post.id}}1">☆</label>
+            </div>
+            <textarea name="feedback" style="width:100%;" id="{{post.id}}starfeedback" rows="3" required></textarea>
+            <span id="{{post.id}}reviewEditIcon" style="display:none;position: relative;margin-left:-10px;top:-20px;"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-fill noPointer" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path class="noPointer" fill-rule="evenodd" d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+            </svg></span>
+            <div style="display: flex;justify-content:end;">
+            <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+            </form>
+            <p>All Reviews</p>
+            <div id="{{post.id}}feedbackList">
+            {% with ratings=post.postrating_set.all %}
+            {% include 'feedbacks/index.html' %}
+            {% endwith %}
+            </div> 
+        </div>
+        <div class="row" style="display: none;" id="{{post.id}}offerdiv" offer_type='' offerUpdate="{% url 'update_proposal' %}">
+        </div>
+    </div>
+<hr class="d-xs-block d-sm-block d-md-none mt-0 mb-1">
+</div>
+{% empty %}
+    <div class="content">
+        <h3>Seems there are no posts at the moment</h3>
+    </div>
+{% endfor %}
+</div>
+
+<div class="loading" style="display: none;">
+    Loading...
+</div>
+        {% if posts.has_next %}
+            {% if request.user.is_authenticated %}
+                <a class="infinite-more-link" href="{% url 'load_post' %}?page={{ posts.next_page_number }}" style="display:none;">More</>
+            {% else %}
+                <a class="infinite-more-link" href="{% url 'load_results' %}?page={{ posts.next_page_number }}" style="display:none;">More</>
+            {% endif %}
+        {% endif %}

@@ -1,0 +1,66 @@
+{% extends 'accounts/base.html' %}
+{% load blog_tags %}
+{% load static %}
+{% load customtags %}
+{% block title %}Omokaa | Blog{% endblock %}
+
+{% block content %}
+
+<style>
+    .blog-header h1 {
+        margin: 80px auto 20px;
+        text-align: center;
+        font-weight: bold;
+        color: #0088ff;
+    }
+
+    .article {
+        font-size: 30px;
+        color: black;
+    }
+
+    .date{
+        color: #666666;
+        font-size: 14px;
+        margin: -6px auto 0;
+    }
+
+    .article-sum, .article-sum a{
+        color: #222222;
+        font-size: 14px;
+        margin: 0 auto;
+        text-align: justify;
+    }
+
+    .article-sum h4{
+        color: black;
+        font-size: 20px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4 d-none d-lg-block p-4 blog-header">
+            <h1>Omokaa Blog</h1>
+            <hr>
+        </div>
+        <div class="col p-4">
+            {% for article in articles %}
+            <h2>
+                <a class="article" href="{{ article.get_absolute_url }}">
+                    {{ article.title }}
+                </a>
+            </h2>
+            <p class="date"><b>{{ article.author.name }}</b> @{{ article.author.username }}
+                <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-dot" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                </svg>
+                {{ article.publish }}</p>
+            <p class="article-sum">{{ article.body|markdown|truncatewords_html:40 }}</p>
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

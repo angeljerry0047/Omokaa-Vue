@@ -1,0 +1,140 @@
+{% load static %}
+
+<style>
+    .account {
+        padding: 10px 0px;
+        margin: 20px auto;
+    }
+
+    .dropdown p {
+        margin: 0px auto;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .profile_img img {
+        height: 40px;
+        width: 40px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background-color: white;
+    }
+
+    .upload {
+        height: 100px;
+        width: 100px;
+        border: 1px solid gray;
+        border-radius: 50%;
+        font-size: 50px;
+        background-color: aqua;
+        color: gray;
+        display: block;
+        margin: 10px auto;
+        align-content: center;
+    }
+
+    .load {
+        margin: 0px 30px;
+    }
+
+    .profile h6 {
+        text-align: center;
+    }
+
+    .profile p {
+        text-align: center;
+    }
+
+    #extend_profile_form_mobile fieldset {
+        display: none;
+    }
+
+
+    .modal-backdrop.show{
+        display: none;
+    }
+</style>
+<div class="account_info">
+    <div class="dropdown" style="padding:15px;">        
+        <div class="profile">
+            <div class="progress mt-2 mb-2">
+                <div class="progress-bar active" role="progressbar" aria-valuemin="0"
+                     aria-valuemax="100"></div>
+            </div>
+            <div class="alert alert-success" style="display: none;"></div>
+            <form id="extend_profile_form_mobile" action="/account/extend/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="fieldset_mobile" style="display: none;">
+                    <h6>Who are you?</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" checked name="user_type" id="individual"
+                               value="1">
+                        <label class="form-check-label" for="individual">Individual</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="user_type" id="business"
+                               value="2">
+                        <label class="form-check-label" for="business">Business</label>
+                    </div>
+                    <input type="submit" name="next_mobile" id="whoNext" current="user_type" class="next_mobile  bbb btn btn-info pull-right" value="Submit"/>
+                </div>
+                <div class="fieldset_mobile" style="display: none;">
+                    <h6 id="dateRegistration_mobile">Date of Birth</h6>
+                    <div class="form-group">
+                        <input type="date" id="datepicker" name="date_birth" class="mt-2">
+                    </div>
+                    <input type="submit" name="next_mobile" current="date_birth" class="next_mobile btn btn-info pull-right" value="Submit"/>
+                </div>
+                <div class="fieldset_mobile" style="display: none;">
+                    <h6 id="uploadPhoto_mobile">Upload profile photo</h6>
+                    <div class="form-group">
+                        <span class="btn btn-success fileinput-button">
+                            <span>Select Image</span>
+                            <!-- <input type="file" name="files[]" id="files" multiple accept="image/jpeg, image/png, image/gif,"><br /> -->
+                            <input type="file" name="profile_pic" id="profile_pic_mobile"
+                                   accept="image/jpeg, image/png, image/gif,"><br/>
+                            
+                        </span>
+                        <img id="cropped_image_mobile" class="text-center"/>
+                        <!-- <input type="file" name="profile_pic" id="profile_pic"  accept="image/jpeg, image/png, image/gif,"> -->
+                    </div>
+                    <input type="submit" name="next_mobile" current="profile_pic" class="next_mobile btn btn-info pull-right" value="Submit"/>
+                </div>
+                <div class="fieldset_mobile" style="display: none;">
+                    <h6 id="uploadID_mobile">Upload Indentification Documents</h6>
+                    <p>(This will not be shared with the public)</p>
+                    <div class="form-group">
+                        <!-- <input type="file" name="identity" id="identity" > -->
+                        <span class="btn btn-success fileinput-button">
+                            <span>Select File</span>
+                            <input type="file" name="identity" id="identity" accept="image/jpeg, image/png, image/gif,">
+                        </span>
+                    </div>
+                    <input type="submit" name="submit" current="identity" class="next_mobile btn btn-primary pull-right" value="Submit"/>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="cropimageModal_mobile" class="modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8 text-center">
+                            <div id="image_demo_mobile" style="width:350px; margin-top:30px"></div>
+                        </div>
+                        <div class="col-md-4" style="padding-top:30px;">
+                            <br/>
+                            <br/>
+                            <br/>
+                            <button class="btn btn-success crop_image_mobile">Crop Image</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

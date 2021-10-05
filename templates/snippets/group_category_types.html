@@ -1,0 +1,7 @@
+<ul style="list-style:none;">
+{% for category in categories %}
+	<li>
+		<a href="#" onclick="loadPostSection(event)" groupname="G/{{category.name}}" groupurl="{% url 'single_group_with_category' category.name %}"><p style="margin:10px 0px;pointer-events:none;"><b style="pointer-events:none;">G/</b>{{category.name}}</p></a>
+	</li>
+{% endfor %}
+</ul>

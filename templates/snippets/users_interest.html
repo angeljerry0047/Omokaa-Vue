@@ -1,0 +1,56 @@
+{% load static %}
+{% load customtags %}
+
+{% if request.user.is_authenticated %}
+ <div class="content">
+                <h4 align="center">Your Interests</h4>
+                <hr>
+                <form reloadurl="{% url 'post_reload_url' %}">
+                    <ul style="list-style:none;margin:2px 0px;" categoryURL="{% url 'load_categories' %}"
+                        subCategoryURL="{% url 'load_sub_categories' %}">
+                        {% for types in interest_types %}
+                        <li style="margin:2px 0px;margin-left: -40px;">
+                            {% if userInterest|isTypeChecked:types.id %}
+                            <input type="checkbox" name="types" value={{types.id}} disabled checked>
+                            <label class="interestLabel" for={{types.name}} style="font-size:16px;">{{types.name}}</label>
+                            <div>
+                                {% if userInterest|isTypeChecked:types.id %}
+                                <ul style="list-style:none;margin:2px 0px;">
+                                    {% for category in types.category_set.all %}
+                                    <li style="font-size: 14px; margin: 2px auto;">
+                                        {% if userInterest|one_more:category.id|isCategoryChecked:types.id %}
+                                        <input type="checkbox" name="categories" value={{category.id}}
+                                               disabled checked>
+                                        <label class="interestLabel" style="font-size: 14px;" for={{category.name}}>{{category.name}}</label>
+                                        <div>
+                                            {% if userInterest|one_more:category.id|isCategoryChecked:types.id %}
+                                            <ul style="list-style:none;margin:2px 0px;">
+                                                {% for subcategory in category.subcategory_set.all %}
+                                                <li style="font-size: 12px; margin:2px auto;">
+                                                    {% if userInterest|one_more:subcategory.id|isSubCategoryChecked:types.id %}
+                                                    <input type="checkbox" name="sub_categories"
+                                                           value={{subcategory.id}}
+                                                           disabled checked>
+                                                    <label class="interestLabel" style="font-size: 12px;" for={{subcategory.name}}>{{subcategory.name}}</label>
+                                                    {% endif %}
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <button type="submit" class="btn btn-success" id="interestBtn" onclick="openSelectInterest(event)" 
+                            style="width:100%;margin: 10px 0px;">Change Interests
+                    </button>
+                </form>
+            </div> 
+            {% endif %}

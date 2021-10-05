@@ -1,0 +1,26 @@
+{% for result in results %}
+<div class="content">
+	<div class="row">
+		<a href="{% url 'user_posts' result.id %}">
+                                <div class="profile_img col-auto">
+                                    {% if result.profile_pic %}
+                                    <img src="{{result.profile_pic.url}}">
+                                    {% else %}
+                                    <img src="{{defaultImage.profile_image.url}}">
+                                    {% endif %}
+                                </div>
+                              </a>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col">
+                                           <a href="{%  url 'user_posts' result.id %}"> <b>{{result.name}}</b> @{{result.username}}</a>
+                                        </div>
+                                    </div>
+                                </div>
+	</div>
+</div>
+{% empty %}
+<div class="content">
+    <h3>Zero Results Found</h3>
+</div>
+{% endfor %}
